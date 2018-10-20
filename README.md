@@ -25,7 +25,7 @@ To be ported:
 
 ## NuGet package
 
-The main Barcode package is 
+To install the main package using:
 
     PM> Install-Package Barcoder
     

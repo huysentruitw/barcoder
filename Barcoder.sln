@@ -5,9 +5,16 @@ VisualStudioVersion = 15.0.28010.2046
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Barcoder", "src\Barcoder\Barcoder.csproj", "{21C87006-2FBF-4711-B0AC-9C1EF0D68F28}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Barcoder.Tests", "tests\Barcoder.Tests\Barcoder.Tests.csproj", "{0C05A8D1-359E-48D1-A29B-39B4E18D4027}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Barcoder.Tests", "tests\Barcoder.Tests\Barcoder.Tests.csproj", "{0C05A8D1-359E-48D1-A29B-39B4E18D4027}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Barcoder.Renderer.Svg", "src\Barcoder.Renderer.Svg\Barcoder.Renderer.Svg.csproj", "{C6FCAA1F-DCFE-48A9-BBB3-2250754B0A4F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Barcoder.Renderer.Svg", "src\Barcoder.Renderer.Svg\Barcoder.Renderer.Svg.csproj", "{C6FCAA1F-DCFE-48A9-BBB3-2250754B0A4F}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{D0A562AE-8D62-4D06-8698-6159DB93EFE0}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+		LICENSE = LICENSE
+		README.md = README.md
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
