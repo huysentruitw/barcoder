@@ -29,9 +29,10 @@ namespace Barcoder.Renderer.Svg.Tests
             string expected;
             using (Stream stream = typeof(SvgRendererTests).Assembly.GetManifestResourceStream("Barcoder.Renderer.Svg.Tests.ExpectedSvgOutput.txt"))
             using (var reader = new StreamReader(stream))
-                expected = reader.ReadToEnd();
+                expected = reader.ReadToEnd().Replace("\r", "").Replace("\n", "");
 
-            svg.Should().Be(expected);
+            var actual = svg.Replace("\r", "").Replace("\n", "");
+            actual.Should().Be(expected);
         }
     }
 }
