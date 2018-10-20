@@ -25,10 +25,31 @@ To be ported:
 
 ## NuGet package
 
-To install the main package using:
+To install the main package:
 
     PM> Install-Package Barcoder
-    
+
+To install the SvgRenderer:
+
+    PM> Install-Package Barcoder.Renderer.Svg
+
+## Usage
+
+```csharp
+var barcode = Code128.Encode("FOO/BAR/12345");
+var renderer = new SvgRenderer();
+
+using (var stream = new MemoryStream())
+using (var reader = new StreamReader(stream))
+{
+    renderer.Render(barcode, stream);
+    stream.Position = 0;
+
+    string svg = reader.ReadToEnd();
+    Console.WriteLine(svg);
+}
+```
+
 ## Contributions
 
 Feel free to dig into the linked GO project and help porting other barcode types.
