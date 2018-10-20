@@ -8,13 +8,13 @@ Code ported from the GO project https://github.com/boombuler/barcode by [boombul
 
 Supported Barcode Types:
 
-* Code128
+* Codabar
+* Code 128
 
 To be ported:
 
 * 2 of 5
 * Aztec Code
-* Codabar
 * Code 39
 * Code 93
 * Data Matrix

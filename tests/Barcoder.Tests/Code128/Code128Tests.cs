@@ -1,7 +1,7 @@
-﻿using FluentAssertions;
+using FluentAssertions;
 using Xunit;
 
-namespace Barcoder.Tests.Code128
+namespace Barcoder.Tests
 {
     public sealed class Code128Tests
     {
@@ -41,7 +41,7 @@ namespace Barcoder.Tests.Code128
         {
             bool result;
             bool T(byte currentEncoding, params char[] nextChars)
-                => Barcoder.Code128.ShouldUseCTable(nextChars, currentEncoding);
+                => Code128.ShouldUseCTable(nextChars, currentEncoding);
 
             result = T(Code128Constants.StartCSymbol, Code128Constants.FNC1, '1', '2');
             result.Should().BeTrue();
@@ -64,7 +64,7 @@ namespace Barcoder.Tests.Code128
         {
             bool result;
             bool T(byte currentEncoding, params char[] nextChars)
-                => Barcoder.Code128.ShouldUseATable(nextChars, currentEncoding);
+                => Code128.ShouldUseATable(nextChars, currentEncoding);
 
             result = T(0, '\r', 'A');
             result.Should().BeTrue();
