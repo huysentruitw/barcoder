@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Linq;
 using Barcoder.Utils;
 
@@ -14,7 +14,7 @@ namespace Barcoder
             if (contentChars.Length <= 0 || contentChars.Length > 80)
                 throw new ArgumentException($"Content length should be between 1 and 80 but got {contentChars.Length}", nameof(content));
 
-            var idxList = GetCodeIndexList(contentChars);
+            BitList? idxList = GetCodeIndexList(contentChars);
             if (!idxList.HasValue)
                 throw new InvalidOperationException($"{content} could not be encoded");
 
@@ -49,7 +49,7 @@ namespace Barcoder
             if (contentChars.Length <= 0 || contentChars.Length > 80)
                 throw new ArgumentException($"Content length should be between 1 and 80 but got {contentChars.Length}", nameof(content));
 
-            var idxList = GetCodeIndexList(contentChars);
+            BitList? idxList = GetCodeIndexList(contentChars);
             if (!idxList.HasValue)
                 throw new InvalidOperationException($"{content} could not be encoded");
 
