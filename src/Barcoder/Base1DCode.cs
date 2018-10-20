@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Barcoder.Utils;
 
 namespace Barcoder
@@ -7,17 +7,20 @@ namespace Barcoder
     {
         private readonly BitList _bitList;
 
-        internal Base1DCode(BitList bitList, string kind, string content)
+        internal Base1DCode(BitList bitList, string kind, string content, int margin)
         {
             _bitList = bitList;
             Content = content;
             Bounds = new Bounds(_bitList.Length, 1);
             Metadata = new Metadata(kind, 1);
+            Margin = margin;
         }
 
         public string Content { get; }
 
         public Bounds Bounds { get; }
+
+        public int Margin { get; }
 
         public bool At(int x, int y)
         {

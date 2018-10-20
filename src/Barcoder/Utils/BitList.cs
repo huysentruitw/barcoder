@@ -4,7 +4,9 @@ namespace Barcoder.Utils
 {
     internal struct BitList
     {
+#pragma warning disable IDE0032 // Use auto property
         private int _count;
+#pragma warning restore IDE0032 // Use auto property
         private uint[] _data;
 
         /// <summary>

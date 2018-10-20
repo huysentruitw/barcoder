@@ -1,4 +1,4 @@
-﻿namespace Barcoder
+namespace Barcoder
 {
     internal static class Code128Constants
     {
@@ -154,5 +154,7 @@
             "\u0019\u001A\u001B\u001C\u001D" + // EM,  SUB, ESC, FS,  GS
             "\u001E\u001F"; // RS,  US
         public const string ATable = ABTable + AOnlyTable;
+
+        public const int Margin = 10;
     }
 }
