@@ -1,5 +1,7 @@
 # Barcoder - Barcode Encoding Library
 
+[![Build status](https://ci.appveyor.com/api/projects/status/x6dhc3m70nxj30mx/branch/master?svg=true)](https://ci.appveyor.com/project/huysentruitw/barcoder/branch/master)
+
 Lightweight Barcode Encoding Library for .NET Framework, .NET Standard and .NET Core.
 
 Code ported from the GO project https://github.com/boombuler/barcode by [boombuler](https://github.com/boombuler).
