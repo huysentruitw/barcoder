@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>net45;net472;netstandard2.0</TargetFrameworks>
+    <TargetFrameworks>net472;netstandard2.0</TargetFrameworks>
     <Title>Barcoder</Title>
     <Description>Lightweight Barcode Encoding Library for .NET Framework, .NET Standard and .NET Core.</Description>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
