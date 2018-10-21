@@ -13,13 +13,13 @@ Supported Barcode Types:
 * Code 39
 * Code 93
 * Code 128
+* EAN 8
+* EAN 13
 
 To be ported:
 
 * Aztec Code
 * Data Matrix
-* EAN 13
-* EAN 8
 * PDF 417
 * QR Code
 
