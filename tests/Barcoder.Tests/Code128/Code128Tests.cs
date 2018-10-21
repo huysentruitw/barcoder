@@ -7,7 +7,7 @@ namespace Barcoder.Tests
     {
         private static void TestEncode(string txt, string testResult)
         {
-            IBarcodeIntCS code = Barcoder.Code128.Encode(txt);
+            IBarcodeIntCS code = Code128.Encode(txt);
 
             code.Bounds.X.Should().Be(testResult.Length);
             code.Bounds.Y.Should().Be(1);
