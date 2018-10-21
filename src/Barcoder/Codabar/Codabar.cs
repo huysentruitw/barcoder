@@ -16,7 +16,7 @@ namespace Barcoder
 
             var resBits = new BitList();
             var i = 0;
-            foreach (var r in content.ToCharArray())
+            foreach (var r in content)
             {
                 if (i++ > 0)
                     resBits.AddBit(false);
