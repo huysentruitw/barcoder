@@ -19,6 +19,8 @@ namespace Barcoder.Tests
 
             code.Bounds.X.Should().Be(testResult.Length);
             code.Bounds.Y.Should().Be(1);
+            code.Metadata.CodeKind.Should().Be(BarcodeType.Code93);
+            code.Metadata.Dimensions.Should().Be(1);
 
             string encoded = string.Empty;
             int i = 0;

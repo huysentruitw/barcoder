@@ -23,7 +23,7 @@ namespace Barcoder
                 resBits.AddBit(CodabarConstants.EncodingTable[r]);
             }
 
-            return new Base1DCode(resBits, Constants.TypeCodabar, content, CodabarConstants.Margin);
+            return new Base1DCode(resBits, BarcodeType.Codabar, content, CodabarConstants.Margin);
         }
     }
 }

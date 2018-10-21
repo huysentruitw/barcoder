@@ -38,7 +38,7 @@ namespace Barcoder
                 result.AddBit(info.data);
             }
 
-            return new Base1DCodeIntCS(result, Constants.TypeCode39, content, checksum, Code39Constants.Margin);
+            return new Base1DCodeIntCS(result, BarcodeType.Code39, content, checksum, Code39Constants.Margin);
         }
 
         private static string Prepare(string content)

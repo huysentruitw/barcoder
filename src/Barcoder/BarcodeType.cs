@@ -1,18 +1,18 @@
-﻿namespace Barcoder
+namespace Barcoder
 {
-    internal static class Constants
+    public static class BarcodeType
     {
-        public const string TypeAztec = "Aztec";
-        public const string TypeCodabar = "Codabar";
-        public const string TypeCode128 = "Code 128";
-        public const string TypeCode39 = "Code 39";
-        public const string TypeCode93 = "Code 93";
-        public const string TypeDataMatrix = "DataMatrix";
-        public const string TypeEAN8 = "EAN 8";
-        public const string TypeEAN13 = "EAN 13";
-        public const string TypePDF = "PDF417";
-        public const string TypeQR = "QR Code";
-        public const string Type2of5 = "2 of 5";
-        public const string Type2of5Interleaved = "2 of 5 (interleaved)";
+        public const string Aztec = "Aztec";
+        public const string Codabar = "Codabar";
+        public const string Code128 = "Code 128";
+        public const string Code39 = "Code 39";
+        public const string Code93 = "Code 93";
+        public const string DataMatrix = "DataMatrix";
+        public const string EAN8 = "EAN 8";
+        public const string EAN13 = "EAN 13";
+        public const string PDF417 = "PDF417";
+        public const string QR = "QR Code";
+        public const string TwoOfFive = "2 of 5";
+        public const string TwoOfFiveInterleaved = "2 of 5 (interleaved)";
     }
 }

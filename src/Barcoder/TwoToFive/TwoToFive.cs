@@ -60,7 +60,7 @@ namespace Barcoder
 
             resBits.AddBit(mode.End);
 
-            return new Base1DCodeIntCS(resBits, interleaved ? Constants.Type2of5Interleaved : Constants.Type2of5, content, checksum, TwoToFiveConstants.Margin);
+            return new Base1DCodeIntCS(resBits, interleaved ? BarcodeType.TwoOfFiveInterleaved : BarcodeType.TwoOfFive, content, checksum, TwoToFiveConstants.Margin);
         }
 
         private static char GetChecksum(string content)

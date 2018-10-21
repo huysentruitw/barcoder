@@ -32,12 +32,12 @@ namespace Barcoder
             if (content.Length == 8)
             {
                 BitList result = EncodeEan8(content);
-                return new Base1DCodeIntCS(result, Constants.TypeEAN8, content, checksum, EanConstants.Margin);
+                return new Base1DCodeIntCS(result, BarcodeType.EAN8, content, checksum, EanConstants.Margin);
             }
             else if (content.Length == 13)
             {
                 BitList result = EncodeEan13(content);
-                return new Base1DCodeIntCS(result, Constants.TypeEAN13, content, checksum, EanConstants.Margin);
+                return new Base1DCodeIntCS(result, BarcodeType.EAN13, content, checksum, EanConstants.Margin);
             }
 
             throw new InvalidOperationException("Invalid content length. Should be 7 or 12 if the code does not include a checksum, 8 or 8 if the code already includes a checksum");

@@ -39,7 +39,7 @@ namespace Barcoder
             if (includeChecksum)
                 result.AddBit(Code128Constants.EncodingTable[sum]);
             result.AddBit(Code128Constants.EncodingTable[Code128Constants.StopSymbol]);
-            return new Base1DCodeIntCS(result, Constants.TypeCode128, content, sum, Code128Constants.Margin);
+            return new Base1DCodeIntCS(result, BarcodeType.Code128, content, sum, Code128Constants.Margin);
         }
 
         internal static bool ShouldUseCTable(char[] nextChars, byte currentEncoding)

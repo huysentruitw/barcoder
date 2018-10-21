@@ -35,7 +35,7 @@ namespace Barcoder
             }
             result.AddBit(true);
 
-            return new Base1DCode(result, Constants.TypeCode93, content, Code93Constants.Margin);
+            return new Base1DCode(result, BarcodeType.Code93, content, Code93Constants.Margin);
         }
 
         private static string Prepare(string content)

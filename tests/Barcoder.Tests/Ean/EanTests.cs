@@ -7,21 +7,19 @@ namespace Barcoder.Tests
     public sealed class EanTests
     {
         [Theory]
-        [InlineData("5901234123457", "10100010110100111011001100100110111101001110101010110011011011001000010101110010011101000100101", "EAN 13", true)]
-        [InlineData("55123457", "1010110001011000100110010010011010101000010101110010011101000100101", "EAN 8", true)]
-        [InlineData("5512345", "1010110001011000100110010010011010101000010101110010011101000100101", "EAN 8", false)]
-        public void Encode(string testCode, string testResult, string kind, bool checkMetadata)
+        [InlineData("5901234123457", "10100010110100111011001100100110111101001110101010110011011011001000010101110010011101000100101", BarcodeType.EAN13, true)]
+        [InlineData("55123457", "1010110001011000100110010010011010101000010101110010011101000100101", BarcodeType.EAN8, true)]
+        [InlineData("5512345", "1010110001011000100110010010011010101000010101110010011101000100101", BarcodeType.EAN8, false)]
+        public void Encode(string testCode, string testResult, string kind, bool checkContent)
         {
             IBarcodeIntCS code = Ean.Encode(testCode);
-            if (checkMetadata)
-            {
+            if (checkContent)
                 code.Content.Should().Be(testCode);
-                code.Metadata.Dimensions.Should().Be(1);
-                code.Metadata.CodeKind.Should().Be(kind);
-            }
 
             code.Bounds.X.Should().Be(testResult.Length);
             code.Bounds.Y.Should().Be(1);
+            code.Metadata.CodeKind.Should().Be(kind);
+            code.Metadata.Dimensions.Should().Be(1);
 
             string encoded = string.Empty;
             int i = 0;
