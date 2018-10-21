@@ -54,4 +54,4 @@ using (var reader = new StreamReader(stream))
 
 Feel free to dig into the linked GO project and help porting other barcode types.
 
-Before you start, it's best to open an issue so we don't work on the same type.
+Before you start, it's best to comment on the related issue so we don't work on the same type.
