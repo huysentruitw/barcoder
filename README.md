@@ -9,13 +9,13 @@ Code ported from the GO project https://github.com/boombuler/barcode by [boombul
 Supported Barcode Types:
 
 * Codabar
+* Code 39
 * Code 128
 
 To be ported:
 
 * 2 of 5
 * Aztec Code
-* Code 39
 * Code 93
 * Data Matrix
 * EAN 13
