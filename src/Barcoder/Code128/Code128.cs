@@ -6,7 +6,7 @@ namespace Barcoder
 {
     public static class Code128
     {
-        public static IBarcodeIntCS Encode(string content)
+        public static IBarcodeIntCS Encode(string content, bool includeChecksum = true)
         {
             if (content == null) throw new ArgumentNullException(nameof(content));
 
@@ -36,28 +36,10 @@ namespace Barcoder
             }
             sum = sum % 103;
 
-            result.AddBit(Code128Constants.EncodingTable[sum]);
+            if (includeChecksum)
+                result.AddBit(Code128Constants.EncodingTable[sum]);
             result.AddBit(Code128Constants.EncodingTable[Code128Constants.StopSymbol]);
             return new Base1DCodeIntCS(result, Constants.TypeCode128, content, sum, Code128Constants.Margin);
-        }
-
-        public static IBarcode EncodeWithoutChecksum(string content)
-        {
-            if (content == null) throw new ArgumentNullException(nameof(content));
-
-            char[] contentChars = content.ToCharArray();
-            if (contentChars.Length <= 0 || contentChars.Length > 80)
-                throw new ArgumentException($"Content length should be between 1 and 80 but got {contentChars.Length}", nameof(content));
-
-            BitList? idxList = GetCodeIndexList(contentChars);
-            if (!idxList.HasValue)
-                throw new InvalidOperationException($"{content} could not be encoded");
-
-            var result = new BitList();
-            foreach (var idx in idxList.Value.GetBytes())
-                result.AddBit(Code128Constants.EncodingTable[idx]);
-            result.AddBit(Code128Constants.EncodingTable[Code128Constants.StopSymbol]);
-            return new Base1DCode(result, Constants.TypeCode128, content, Code128Constants.Margin);
         }
 
         internal static bool ShouldUseCTable(char[] nextChars, byte currentEncoding)
