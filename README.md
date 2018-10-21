@@ -10,13 +10,13 @@ Supported Barcode Types:
 
 * Codabar
 * Code 39
+* Code 93
 * Code 128
 
 To be ported:
 
 * 2 of 5
 * Aztec Code
-* Code 93
 * Data Matrix
 * EAN 13
 * EAN 8
