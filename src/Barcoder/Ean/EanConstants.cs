@@ -4,7 +4,7 @@ namespace Barcoder
 {
     internal static class EanConstants
     {
-        public static readonly IReadOnlyDictionary<char, EncodedNumber> EncodeTable = new Dictionary<char, EncodedNumber>
+        public static readonly IReadOnlyDictionary<char, EncodedNumber> EncodingTable = new Dictionary<char, EncodedNumber>
         {
             { '0', new EncodedNumber
                 {

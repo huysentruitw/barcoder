@@ -32,7 +32,7 @@ namespace Barcoder
                 if (i++ != 0)
                     result.AddBit(false);
 
-                if (!Code39Constants.EncodeTable.TryGetValue(r, out (int value, bool[] data) info))
+                if (!Code39Constants.EncodingTable.TryGetValue(r, out (int value, bool[] data) info))
                     throw new InvalidOperationException("Invalid data! Try full ASCII mode");
 
                 result.AddBit(info.data);
@@ -63,13 +63,13 @@ namespace Barcoder
             var sum = 0;
             foreach (char r in content)
             {
-                if (!Code39Constants.EncodeTable.TryGetValue(r, out (int value, bool[] data) info) || info.value < 0)
+                if (!Code39Constants.EncodingTable.TryGetValue(r, out (int value, bool[] data) info) || info.value < 0)
                     return '#';
                 sum += info.value;
             }
 
             sum = sum % 43;
-            foreach (KeyValuePair<char, (int value, bool[] data)> kvp in Code39Constants.EncodeTable)
+            foreach (KeyValuePair<char, (int value, bool[] data)> kvp in Code39Constants.EncodingTable)
             {
                 if (kvp.Value.value == sum)
                     return kvp.Key;

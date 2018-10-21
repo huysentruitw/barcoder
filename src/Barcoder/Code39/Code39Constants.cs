@@ -4,7 +4,7 @@ namespace Barcoder
 {
     internal static class Code39Constants
     {
-        public static readonly IReadOnlyDictionary<char, (int value, bool[] data)> EncodeTable = new Dictionary<char, (int, bool[])>
+        public static readonly IReadOnlyDictionary<char, (int value, bool[] data)> EncodingTable = new Dictionary<char, (int, bool[])>
         {
             { '0', (0,  new[] {true, false, true, false, false, true, true, false, true, true, false, true}) },
             { '1', (1,  new[] {true, true, false, true, false, false, true, false, true, false, true, true}) },

@@ -9,7 +9,7 @@ namespace Barcoder
         public const char FNC3 = '\u00f3';
         public const char FNC4 = '\u00f4';
 
-        public static readonly IReadOnlyDictionary<char, (int value, uint data)> EncodeTable = new Dictionary<char, (int, uint)>
+        public static readonly IReadOnlyDictionary<char, (int value, uint data)> EncodingTable = new Dictionary<char, (int, uint)>
         {
             { '0',  (0, 0x114) },  { '1',  (1, 0x148) },  { '2', (2, 0x144) },
             { '3',  (3, 0x142) },  { '4',  (4, 0x128) },  { '5', (5, 0x124) },

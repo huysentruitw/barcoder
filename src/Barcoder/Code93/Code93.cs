@@ -29,7 +29,7 @@ namespace Barcoder
             var result = new BitList();
             foreach (var r in data)
             {
-                if (!Code93Constants.EncodeTable.TryGetValue(r, out (int value, uint data) info))
+                if (!Code93Constants.EncodingTable.TryGetValue(r, out (int value, uint data) info))
                     throw new InvalidOperationException("Invalid data");
                 result.AddBits(info.data, 9);
             }
@@ -59,14 +59,14 @@ namespace Barcoder
             for (var i = data.Length - 1; i >= 0; i--)
             {
                 char r = data[i];
-                if (!Code93Constants.EncodeTable.TryGetValue(r, out (int value, uint data) info))
+                if (!Code93Constants.EncodingTable.TryGetValue(r, out (int value, uint data) info))
                     return ' ';
                 total += info.value * weight;
                 if (++weight > maxWeight)
                     weight = 1;
             }
             total = total % 47;
-            foreach (KeyValuePair<char, (int value, uint data)> kvp in Code93Constants.EncodeTable)
+            foreach (KeyValuePair<char, (int value, uint data)> kvp in Code93Constants.EncodingTable)
             {
                 if (kvp.Value.value == total)
                     return kvp.Key;
