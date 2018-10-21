@@ -4,7 +4,7 @@
 
 Lightweight Barcode Encoding Library for .NET Framework, .NET Standard and .NET Core.
 
-Code ported from the GO project https://github.com/boombuler/barcode by [boombuler](https://github.com/boombuler).
+Code ported from the GO project https://github.com/boombuler/barcode by [Florian Sundermann](https://github.com/boombuler).
 
 Supported Barcode Types:
 
