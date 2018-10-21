@@ -1,3 +1,4 @@
+using System;
 using FluentAssertions;
 using Xunit;
 
@@ -5,7 +6,49 @@ namespace Barcoder.Tests
 {
     public sealed class Code128Tests
     {
-        private static void TestEncode(string txt, string testResult)
+        private const string FNC1      = "\u00f1";
+        private const string FNC2      = "\u00f2";
+        private const string FNC3      = "\u00f3";
+        private const string FNC4      = "\u00f4";
+        private const string EncFNC1   = "11110101110";
+        private const string EncFNC2   = "11110101000";
+        private const string EncFNC3   = "10111100010";
+        private const string EncFNC4   = "10111101110";
+        private const string EncStartB = "11010010000";
+        private const string EncStop   = "1100011101011";
+
+        // Special Case FC1 can also be encoded to C Table therefor using 123 as suffix might have unexpected results.
+        [Theory]
+        [InlineData(FNC1 + "A23", EncStartB + EncFNC1 + "10100011000" + "11001110010" + "11001011100" + "10100011110" + EncStop)]
+        [InlineData(FNC2 + "123", EncStartB + EncFNC2 + "10011100110" + "11001110010" + "11001011100" + "11100010110" + EncStop)]
+        [InlineData(FNC3 + "123", EncStartB + EncFNC3 + "10011100110" + "11001110010" + "11001011100" + "11101000110" + EncStop)]
+        [InlineData(FNC4 + "123", EncStartB + EncFNC4 + "10011100110" + "11001110010" + "11001011100" + "11100011010" + EncStop)]
+        [InlineData(FNC3 + "$P\rI", "110100001001011110001010010001100111011101101111011101011000100010110001010001100011101011")]
+        // <Start A><FNC3>$P\r<checksum><STOP>
+        [InlineData(FNC3 + "$P\r",
+            "11010000100" + // <Start A>
+            "10111100010" + // <FNC3>
+            "10010001100" + // $
+            "11101110110" + // P
+            "11110111010" + // CR
+            "11000100010" + // checksum = 'I'
+            "1100011101011")] // STOP
+        // <Start B><FNC3>$P,Ae,P<CR><checksum><STOP>
+        [InlineData(FNC3 + "$P,Ae,P\r",
+            "11010010000" + // <Start B>
+            "10111100010" + // <FNC3>
+            "10010001100" + // $
+            "11101110110" + // P
+            "10110011100" + // ,
+            "10100011000" + // A
+            "10110010000" + // e
+            "10110011100" + // ,
+            "11101110110" + // P
+            "11101011110" + // <Code A>
+            "11110111010" + // <CR>
+            "10110001000" + // checksum = 'D'
+            "1100011101011")] // STOP
+        public void Encode(string txt, string testResult)
         {
             IBarcodeIntCS code = Code128.Encode(txt);
 
@@ -20,24 +63,7 @@ namespace Barcoder.Tests
         }
 
         [Fact]
-        public void Code128_EncodeFunctionChars()
-        {
-            var encFNC1 = "11110101110";
-            var encFNC2 = "11110101000";
-            var encFNC3 = "10111100010";
-            var encFNC4 = "10111101110";
-            var encStartB = "11010010000";
-            var encStop = "1100011101011";
-
-            // Special Case FC1 can also be encoded to C Table therefor using 123 as suffix might have unexpected results.
-            TestEncode(Code128Constants.FNC1 + "A23", encStartB + encFNC1 + "10100011000" + "11001110010" + "11001011100" + "10100011110" + encStop);
-            TestEncode(Code128Constants.FNC2 + "123", encStartB + encFNC2 + "10011100110" + "11001110010" + "11001011100" + "11100010110" + encStop);
-            TestEncode(Code128Constants.FNC3 + "123", encStartB + encFNC3 + "10011100110" + "11001110010" + "11001011100" + "11101000110" + encStop);
-            TestEncode(Code128Constants.FNC4 + "123", encStartB + encFNC4 + "10011100110" + "11001110010" + "11001011100" + "11100011010" + encStop);
-        }
-
-        [Fact]
-        public void Code128_ShouldUseCTable()
+        public void Encode_ShouldUseCTable()
         {
             bool result;
             bool T(byte currentEncoding, params char[] nextChars)
@@ -60,7 +86,7 @@ namespace Barcoder.Tests
         }
 
         [Fact]
-        public void Code128_Issue16()
+        public void Encode_ShouldUseATable()
         {
             bool result;
             bool T(byte currentEncoding, params char[] nextChars)
@@ -74,38 +100,22 @@ namespace Barcoder.Tests
 
             result = T(0, Code128Constants.FNC1, '1', '2', '3');
             result.Should().BeFalse();
-
-            TestEncode(Code128Constants.FNC3 + "$P\rI", "110100001001011110001010010001100111011101101111011101011000100010110001010001100011101011");
         }
 
         [Fact]
-        public void Code128_Datalogic()
+        public void Encode_EmptyString_ShouldThrowException()
         {
-            // <Start A><FNC3>$P\r<checksum><STOP>
-            TestEncode(Code128Constants.FNC3 + "$P\r",
-                "11010000100" + // <Start A>
-                "10111100010" + // <FNC3>
-                "10010001100" + // $
-                "11101110110" + // P
-                "11110111010" + // CR
-                "11000100010" + // checksum = 'I'
-                "1100011101011"); // STOP
+            Action action = () => Code128.Encode(string.Empty);
+            action.Should().Throw<ArgumentException>()
+                .And.Message.StartsWith("Content length should be between 1 and 80 but got 0");
+        }
 
-            // <Start B><FNC3>$P,Ae,P<CR><checksum><STOP>
-            TestEncode(Code128Constants.FNC3 + "$P,Ae,P\r",
-                "11010010000" + // <Start B>
-                "10111100010" + // <FNC3>
-                "10010001100" + // $
-                "11101110110" + // P
-                "10110011100" + // ,
-                "10100011000" + // A
-                "10110010000" + // e
-                "10110011100" + // ,
-                "11101110110" + // P
-                "11101011110" + // <Code A>
-                "11110111010" + // <CR>
-                "10110001000" + // checksum = 'D'
-                "1100011101011"); // STOP
+        [Fact]
+        public void Encode_ContentTooLong_ShouldThrowException()
+        {
+            Action action = () => Code128.Encode("123456789012345678901234567890123456789012345678901234567890123456789012345678901");
+            action.Should().Throw<ArgumentException>()
+                .And.Message.StartsWith("Content length should be between 1 and 80 but got 81");
         }
     }
 }

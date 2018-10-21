@@ -50,7 +50,7 @@ namespace Barcoder
             var cpos = 0;
             foreach (var r in content)
             {
-                EanConstants.EncodedNumber num = EanConstants.EncodingTable[r];
+                EanConstants.EncodedNumber num = EanConstants.EncodeTable[r];
                 bool[] data = cpos < 4 ? num.LeftOdd : num.Right;
                 if (cpos == 4)
                     result.AddBit(false, true, false, true, false);
@@ -69,7 +69,7 @@ namespace Barcoder
             var cpos = 0;
             foreach (var r in content)
             {
-                EanConstants.EncodedNumber num = EanConstants.EncodingTable[r];
+                EanConstants.EncodedNumber num = EanConstants.EncodeTable[r];
                 if (firstNum == null)
                 {
                     firstNum = num.Checksum;
