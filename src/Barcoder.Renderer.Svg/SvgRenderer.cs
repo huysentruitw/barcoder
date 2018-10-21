@@ -45,15 +45,18 @@ namespace Barcoder.Renderer.Svg
                 if (prevBar)
                 {
                     line = document.AddLine();
-                    line.X1 = line.X2 = x + barcode.Margin - 0.5;
+                    line.StrokeWidth = 1.5;
+                    line.X1 = line.X2 = x + barcode.Margin - 0.25;
                     line.Y1 = 0;
                     line.Y2 = 50;
                 }
-
-                line = document.AddLine();
-                line.X1 = line.X2 = x + barcode.Margin;
-                line.Y1 = 0;
-                line.Y2 = 50;
+                else
+                {
+                    line = document.AddLine();
+                    line.X1 = line.X2 = x + barcode.Margin;
+                    line.Y1 = 0;
+                    line.Y2 = 50;
+                }
 
                 prevBar = true;
             }
