@@ -1,10 +1,11 @@
 using System;
+using Barcoder.Code128;
 using FluentAssertions;
 using Xunit;
 
-namespace Barcoder.Tests
+namespace Barcoder.Tests.Code128
 {
-    public sealed class Code128Tests
+    public sealed class Code128EncoderTests
     {
         private const string FNC1      = "\u00f1";
         private const string FNC2      = "\u00f2";
@@ -50,7 +51,7 @@ namespace Barcoder.Tests
             "1100011101011")] // STOP
         public void Encode(string txt, string testResult)
         {
-            IBarcodeIntCS code = Code128.Encode(txt);
+            IBarcodeIntCS code = Code128Encoder.Encode(txt);
 
             code.Bounds.X.Should().Be(testResult.Length);
             code.Bounds.Y.Should().Be(1);
@@ -69,21 +70,21 @@ namespace Barcoder.Tests
         {
             bool result;
             bool T(byte currentEncoding, params char[] nextChars)
-                => Code128.ShouldUseCTable(nextChars, currentEncoding);
+                => Code128Encoder.ShouldUseCTable(nextChars, currentEncoding);
 
-            result = T(Code128Constants.StartCSymbol, Code128Constants.FNC1, '1', '2');
+            result = T(Constants.StartCSymbol, Constants.FNC1, '1', '2');
             result.Should().BeTrue();
 
-            result = T(Code128Constants.StartCSymbol, Code128Constants.FNC1, '1');
+            result = T(Constants.StartCSymbol, Constants.FNC1, '1');
             result.Should().BeFalse();
 
-            result = T(Code128Constants.StartCSymbol, '0', Code128Constants.FNC1, '1');
+            result = T(Constants.StartCSymbol, '0', Constants.FNC1, '1');
             result.Should().BeFalse();
 
-            result = T(Code128Constants.StartBSymbol, '0', '1', Code128Constants.FNC1, '2', '3');
+            result = T(Constants.StartBSymbol, '0', '1', Constants.FNC1, '2', '3');
             result.Should().BeTrue();
 
-            result = T(Code128Constants.StartBSymbol, '0', '1', Code128Constants.FNC1);
+            result = T(Constants.StartBSymbol, '0', '1', Constants.FNC1);
             result.Should().BeFalse();
         }
 
@@ -92,22 +93,22 @@ namespace Barcoder.Tests
         {
             bool result;
             bool T(byte currentEncoding, params char[] nextChars)
-                => Code128.ShouldUseATable(nextChars, currentEncoding);
+                => Code128Encoder.ShouldUseATable(nextChars, currentEncoding);
 
             result = T(0, '\r', 'A');
             result.Should().BeTrue();
 
-            result = T(0, Code128Constants.FNC1, '\r');
+            result = T(0, Constants.FNC1, '\r');
             result.Should().BeTrue();
 
-            result = T(0, Code128Constants.FNC1, '1', '2', '3');
+            result = T(0, Constants.FNC1, '1', '2', '3');
             result.Should().BeFalse();
         }
 
         [Fact]
         public void Encode_EmptyString_ShouldThrowException()
         {
-            Action action = () => Code128.Encode(string.Empty);
+            Action action = () => Code128Encoder.Encode(string.Empty);
             action.Should().Throw<ArgumentException>()
                 .And.Message.StartsWith("Content length should be between 1 and 80 but got 0");
         }
@@ -115,7 +116,7 @@ namespace Barcoder.Tests
         [Fact]
         public void Encode_ContentTooLong_ShouldThrowException()
         {
-            Action action = () => Code128.Encode("123456789012345678901234567890123456789012345678901234567890123456789012345678901");
+            Action action = () => Code128Encoder.Encode("123456789012345678901234567890123456789012345678901234567890123456789012345678901");
             action.Should().Throw<ArgumentException>()
                 .And.Message.StartsWith("Content length should be between 1 and 80 but got 81");
         }

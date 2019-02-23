@@ -2,9 +2,9 @@ using System;
 using System.Linq;
 using Barcoder.Utils;
 
-namespace Barcoder
+namespace Barcoder.Code128
 {
-    public static class Code128
+    public static class Code128Encoder
     {
         public static IBarcodeIntCS Encode(string content, bool includeChecksum = true)
         {
@@ -31,27 +31,27 @@ namespace Barcoder
                 {
                     sum += i * idx;
                 }
-                result.AddBit(Code128Constants.EncodingTable[idx]);
+                result.AddBit(Constants.EncodingTable[idx]);
                 i++;
             }
             sum = sum % 103;
 
             if (includeChecksum)
-                result.AddBit(Code128Constants.EncodingTable[sum]);
-            result.AddBit(Code128Constants.EncodingTable[Code128Constants.StopSymbol]);
-            return new Base1DCodeIntCS(result, BarcodeType.Code128, content, sum, Code128Constants.Margin);
+                result.AddBit(Constants.EncodingTable[sum]);
+            result.AddBit(Constants.EncodingTable[Constants.StopSymbol]);
+            return new Base1DCodeIntCS(result, BarcodeType.Code128, content, sum, Constants.Margin);
         }
 
         internal static bool ShouldUseCTable(char[] nextChars, byte currentEncoding)
         {
             var requiredDigits = 4;
-            if (currentEncoding == Code128Constants.StartCSymbol)
+            if (currentEncoding == Constants.StartCSymbol)
                 requiredDigits = 2;
             if (nextChars.Length < requiredDigits)
                 return false;
             for (var i = 0; i < requiredDigits; i++)
             {
-                if ((i % 2) == 0 && nextChars[i] == Code128Constants.FNC1)
+                if ((i % 2) == 0 && nextChars[i] == Constants.FNC1)
                 {
                     requiredDigits++;
                     if (nextChars.Length < requiredDigits)
@@ -67,24 +67,24 @@ namespace Barcoder
         private static bool TableContainsChar(string table, char ch)
         {
             return table.Contains(ch)
-                || ch == Code128Constants.FNC1
-                || ch == Code128Constants.FNC2
-                || ch == Code128Constants.FNC3
-                || ch == Code128Constants.FNC4;
+                || ch == Constants.FNC1
+                || ch == Constants.FNC2
+                || ch == Constants.FNC3
+                || ch == Constants.FNC4;
         }
 
         internal static bool ShouldUseATable(char[] nextChars, byte currentEncoding)
         {
             var nextChar = nextChars[0];
-            if (!TableContainsChar(Code128Constants.BTable, nextChar) || currentEncoding == Code128Constants.StartASymbol)
-                return TableContainsChar(Code128Constants.ATable, nextChar);
+            if (!TableContainsChar(Constants.BTable, nextChar) || currentEncoding == Constants.StartASymbol)
+                return TableContainsChar(Constants.ATable, nextChar);
             if (currentEncoding == 0)
             {
                 foreach (var r in nextChars)
                 {
-                    if (TableContainsChar(Code128Constants.ABTable, r))
+                    if (TableContainsChar(Constants.ABTable, r))
                         continue;
-                    if (Code128Constants.AOnlyTable.Contains(r))
+                    if (Constants.AOnlyTable.Contains(r))
                         return true;
                     break;
                 }
@@ -101,19 +101,19 @@ namespace Barcoder
                 var nextChars = content.Skip(i).ToArray();
                 if (ShouldUseCTable(nextChars, curEncoding))
                 {
-                    if (curEncoding != Code128Constants.StartCSymbol)
+                    if (curEncoding != Constants.StartCSymbol)
                     {
                         if (curEncoding == 0)
                         {
-                            result.AddByte(Code128Constants.StartCSymbol);
+                            result.AddByte(Constants.StartCSymbol);
                         }
                         else
                         {
-                            result.AddByte(Code128Constants.CodeCSymbol);
+                            result.AddByte(Constants.CodeCSymbol);
                         }
-                        curEncoding = Code128Constants.StartCSymbol;
+                        curEncoding = Constants.StartCSymbol;
                     }
-                    if (content[i] == Code128Constants.FNC1)
+                    if (content[i] == Constants.FNC1)
                     {
                         result.AddByte(102);
                     }
@@ -127,36 +127,36 @@ namespace Barcoder
                 }
                 else if (ShouldUseATable(nextChars, curEncoding))
                 {
-                    if (curEncoding != Code128Constants.StartASymbol)
+                    if (curEncoding != Constants.StartASymbol)
                     {
                         if (curEncoding == 0)
                         {
-                            result.AddByte(Code128Constants.StartASymbol);
+                            result.AddByte(Constants.StartASymbol);
                         }
                         else
                         {
-                            result.AddByte(Code128Constants.CodeASymbol);
+                            result.AddByte(Constants.CodeASymbol);
                         }
-                        curEncoding = Code128Constants.StartASymbol;
+                        curEncoding = Constants.StartASymbol;
                     }
 
                     int idx;
                     switch (content[i])
                     {
-                        case Code128Constants.FNC1:
+                        case Constants.FNC1:
                             idx = 102;
                             break;
-                        case Code128Constants.FNC2:
+                        case Constants.FNC2:
                             idx = 97;
                             break;
-                        case Code128Constants.FNC3:
+                        case Constants.FNC3:
                             idx = 96;
                             break;
-                        case Code128Constants.FNC4:
+                        case Constants.FNC4:
                             idx = 101;
                             break;
                         default:
-                            idx = Code128Constants.ATable.IndexOf(content[i]);
+                            idx = Constants.ATable.IndexOf(content[i]);
                             break;
                     }
                     if (idx < 0)
@@ -167,36 +167,36 @@ namespace Barcoder
                 }
                 else
                 {
-                    if (curEncoding != Code128Constants.StartBSymbol)
+                    if (curEncoding != Constants.StartBSymbol)
                     {
                         if (curEncoding == 0)
                         {
-                            result.AddByte(Code128Constants.StartBSymbol);
+                            result.AddByte(Constants.StartBSymbol);
                         }
                         else
                         {
-                            result.AddByte(Code128Constants.CodeBSymbol);
+                            result.AddByte(Constants.CodeBSymbol);
                         }
-                        curEncoding = Code128Constants.StartBSymbol;
+                        curEncoding = Constants.StartBSymbol;
                     }
 
                     int idx;
                     switch (content[i])
                     {
-                        case Code128Constants.FNC1:
+                        case Constants.FNC1:
                             idx = 102;
                             break;
-                        case Code128Constants.FNC2:
+                        case Constants.FNC2:
                             idx = 97;
                             break;
-                        case Code128Constants.FNC3:
+                        case Constants.FNC3:
                             idx = 96;
                             break;
-                        case Code128Constants.FNC4:
+                        case Constants.FNC4:
                             idx = 100;
                             break;
                         default:
-                            idx = Code128Constants.BTable.IndexOf(content[i]);
+                            idx = Constants.BTable.IndexOf(content[i]);
                             break;
                     }
 

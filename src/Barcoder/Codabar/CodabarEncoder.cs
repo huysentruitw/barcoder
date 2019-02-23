@@ -2,9 +2,9 @@ using System;
 using System.Text.RegularExpressions;
 using Barcoder.Utils;
 
-namespace Barcoder
+namespace Barcoder.Codebar
 {
-    public static class Codabar
+    public static class CodabarEncoder
     {
         public static IBarcode Encode(string content)
         {
@@ -20,10 +20,10 @@ namespace Barcoder
             {
                 if (i++ > 0)
                     resBits.AddBit(false);
-                resBits.AddBit(CodabarConstants.EncodingTable[r]);
+                resBits.AddBit(Constants.EncodingTable[r]);
             }
 
-            return new Base1DCode(resBits, BarcodeType.Codabar, content, CodabarConstants.Margin);
+            return new Base1DCode(resBits, BarcodeType.Codabar, content, Constants.Margin);
         }
     }
 }

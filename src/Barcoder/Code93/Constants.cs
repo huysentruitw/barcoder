@@ -1,8 +1,8 @@
 using System.Collections.Generic;
 
-namespace Barcoder
+namespace Barcoder.Code93
 {
-    internal static class Code93Constants
+    internal static class Constants
     {
         public const char FNC1 = '\u00f1';
         public const char FNC2 = '\u00f2';

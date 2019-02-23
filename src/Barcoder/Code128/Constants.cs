@@ -1,6 +1,6 @@
-namespace Barcoder
+namespace Barcoder.Code128
 {
-    internal static class Code128Constants
+    internal static class Constants
     {
         public static readonly bool[][] EncodingTable = new bool[107][]
         {

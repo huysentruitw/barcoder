@@ -1,16 +1,17 @@
 using System;
+using Barcoder.Codebar;
 using FluentAssertions;
 using Xunit;
 
-namespace Barcoder.Tests
+namespace Barcoder.Tests.Codebar
 {
-    public sealed class CodabarTests
+    public sealed class CodabarEncoderTests
     {
         [Theory]
         [InlineData("A40156B", "10110010010101101001010101001101010110010110101001010010101101001001011")]
         public void Encode(string txt, string testResult)
         {
-            IBarcode code = Codabar.Encode(txt);
+            IBarcode code = CodabarEncoder.Encode(txt);
             code.Should().NotBeNull();
             code.Bounds.X.Should().Be(testResult.Length);
             code.Bounds.Y.Should().Be(1);
@@ -26,7 +27,7 @@ namespace Barcoder.Tests
         [Fact]
         public void Encode_InvalidFormat_ShouldThrowException()
         {
-            Action action = () => Codabar.Encode("C156Z");
+            Action action = () => CodabarEncoder.Encode("C156Z");
             action.Should().Throw<InvalidOperationException>()
                 .WithMessage("C156Z could not be encoded");
         }

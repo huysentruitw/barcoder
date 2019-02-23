@@ -1,10 +1,11 @@
 using System;
+using Barcoder.Code39;
 using FluentAssertions;
 using Xunit;
 
-namespace Barcoder.Tests
+namespace Barcoder.Tests.Code39
 {
-    public sealed class Code39Tests
+    public sealed class Code39EncoderTests
     {
         [Theory]
         [InlineData(false, false, "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789",
@@ -16,7 +17,7 @@ namespace Barcoder.Tests
             "011010011010101011001101010101001011011011010010110101011001011010100101101101")]
         public void Encode(bool includeChecksum, bool fullAsciiMode, string data, string testResult)
         {
-            IBarcodeIntCS code = Code39.Encode(data, includeChecksum, fullAsciiMode);
+            IBarcodeIntCS code = Code39Encoder.Encode(data, includeChecksum, fullAsciiMode);
 
             code.Bounds.X.Should().Be(testResult.Length);
             code.Bounds.Y.Should().Be(1);
@@ -33,14 +34,14 @@ namespace Barcoder.Tests
         [Fact]
         public void Encode_Checksum()
         {
-            IBarcodeIntCS code = Code39.Encode("5B79AN", true, true);
+            IBarcodeIntCS code = Code39Encoder.Encode("5B79AN", true, true);
             code.Checksum.Should().Be('M');
         }
 
         [Fact]
         public void Encode_ContainsStarInNonAsciiMode_ShouldThrowException()
         {
-            Action action = () => Code39.Encode("01*", false, false);
+            Action action = () => Code39Encoder.Encode("01*", false, false);
             action.Should().Throw<InvalidOperationException>()
                 .WithMessage("Invalid data! Try full ASCII mode");
         }
@@ -48,7 +49,7 @@ namespace Barcoder.Tests
         [Fact]
         public void Encode_UnderscoreInNonAsciiMode_ShouldThrowException()
         {
-            Action action = () => Code39.Encode("_", false, false);
+            Action action = () => Code39Encoder.Encode("_", false, false);
             action.Should().Throw<InvalidOperationException>()
                 .WithMessage("Invalid data! Try full ASCII mode");
         }
@@ -56,14 +57,14 @@ namespace Barcoder.Tests
         [Fact]
         public void Encode_UnderscoreInAsciiMode_ShouldNotThrowException()
         {
-            Action action = () => Code39.Encode("_", false, true);
+            Action action = () => Code39Encoder.Encode("_", false, true);
             action.Should().NotThrow();
         }
 
         [Fact]
         public void Encode_NonAsciiCharacterInAsciiMode_ShouldThrowException()
         {
-            Action action = () => Code39.Encode("ù", false, true);
+            Action action = () => Code39Encoder.Encode("ù", false, true);
             action.Should().Throw<InvalidOperationException>()
                 .WithMessage("Only ASCII strings can be encoded");
         }

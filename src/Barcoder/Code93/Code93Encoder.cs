@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Text;
 using Barcoder.Utils;
 
-namespace Barcoder
+namespace Barcoder.Code93
 {
-    public static class Code93
+    public static class Code93Encoder
     {
         public static IBarcode Encode(string content, bool includeChecksum, bool fullAsciiMode)
         {
@@ -29,13 +29,13 @@ namespace Barcoder
             var result = new BitList();
             foreach (var r in data)
             {
-                if (!Code93Constants.EncodingTable.TryGetValue(r, out (int value, uint data) info))
+                if (!Constants.EncodingTable.TryGetValue(r, out (int value, uint data) info))
                     throw new InvalidOperationException("Invalid data");
                 result.AddBits(info.data, 9);
             }
             result.AddBit(true);
 
-            return new Base1DCode(result, BarcodeType.Code93, content, Code93Constants.Margin);
+            return new Base1DCode(result, BarcodeType.Code93, content, Constants.Margin);
         }
 
         private static string Prepare(string content)
@@ -45,7 +45,7 @@ namespace Barcoder
             {
                 if (r > 127)
                     throw new InvalidOperationException("Only ASCII strings can be encoded");
-                result.Append(Code93Constants.ExtendedTable[r]);
+                result.Append(Constants.ExtendedTable[r]);
             }
             return result.ToString();
         }
@@ -59,14 +59,14 @@ namespace Barcoder
             for (var i = data.Length - 1; i >= 0; i--)
             {
                 char r = data[i];
-                if (!Code93Constants.EncodingTable.TryGetValue(r, out (int value, uint data) info))
+                if (!Constants.EncodingTable.TryGetValue(r, out (int value, uint data) info))
                     return ' ';
                 total += info.value * weight;
                 if (++weight > maxWeight)
                     weight = 1;
             }
             total = total % 47;
-            foreach (KeyValuePair<char, (int value, uint data)> kvp in Code93Constants.EncodingTable)
+            foreach (KeyValuePair<char, (int value, uint data)> kvp in Constants.EncodingTable)
             {
                 if (kvp.Value.value == total)
                     return kvp.Key;

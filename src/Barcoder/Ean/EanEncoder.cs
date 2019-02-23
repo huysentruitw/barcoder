@@ -2,9 +2,9 @@ using System;
 using System.Text.RegularExpressions;
 using Barcoder.Utils;
 
-namespace Barcoder
+namespace Barcoder.Ean
 {
-    public static class Ean
+    public static class EanEncoder
     {
         public static IBarcodeIntCS Encode(string content)
         {
@@ -32,15 +32,15 @@ namespace Barcoder
             if (content.Length == 8)
             {
                 BitList result = EncodeEan8(content);
-                return new Base1DCodeIntCS(result, BarcodeType.EAN8, content, checksum, EanConstants.Margin);
+                return new Base1DCodeIntCS(result, BarcodeType.EAN8, content, checksum, Constants.Margin);
             }
             else if (content.Length == 13)
             {
                 BitList result = EncodeEan13(content);
-                return new Base1DCodeIntCS(result, BarcodeType.EAN13, content, checksum, EanConstants.Margin);
+                return new Base1DCodeIntCS(result, BarcodeType.EAN13, content, checksum, Constants.Margin);
             }
 
-            throw new InvalidOperationException("Invalid content length. Should be 7 or 12 if the code does not include a checksum, 8 or 8 if the code already includes a checksum");
+            throw new InvalidOperationException("Invalid content length. Should be 7 or 12 if the code does not include a checksum, 8 or 13 if the code already includes a checksum");
         }
 
         private static BitList EncodeEan8(string content)
@@ -50,7 +50,7 @@ namespace Barcoder
             var cpos = 0;
             foreach (var r in content)
             {
-                EanConstants.EncodedNumber num = EanConstants.EncodingTable[r];
+                Constants.EncodedNumber num = Constants.EncodingTable[r];
                 bool[] data = cpos < 4 ? num.LeftOdd : num.Right;
                 if (cpos == 4)
                     result.AddBit(false, true, false, true, false);
@@ -69,7 +69,7 @@ namespace Barcoder
             var cpos = 0;
             foreach (var r in content)
             {
-                EanConstants.EncodedNumber num = EanConstants.EncodingTable[r];
+                Constants.EncodedNumber num = Constants.EncodingTable[r];
                 if (firstNum == null)
                 {
                     firstNum = num.Checksum;

@@ -1,8 +1,8 @@
 using System.Collections.Generic;
 
-namespace Barcoder
+namespace Barcoder.TwoToFive
 {
-    internal static class TwoToFiveConstants
+    internal static class Constants
     {
         public const int PatternWidth = 5;
 

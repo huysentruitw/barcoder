@@ -1,4 +1,5 @@
 using System.IO;
+using Barcoder.Code128;
 using FluentAssertions;
 using Xunit;
 
@@ -10,7 +11,7 @@ namespace Barcoder.Renderer.Svg.Tests
         public void Render_Barcode1D()
         {
             // Arrange
-            IBarcodeIntCS barcode = Code128.Encode("Wikipedia");
+            IBarcodeIntCS barcode = Code128Encoder.Encode("Wikipedia");
             var renderer = new SvgRenderer();
 
             // Act

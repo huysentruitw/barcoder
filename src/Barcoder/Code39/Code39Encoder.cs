@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Text;
 using Barcoder.Utils;
 
-namespace Barcoder
+namespace Barcoder.Code39
 {
-    public static class Code39
+    public static class Code39Encoder
     {
         public static IBarcodeIntCS Encode(string content, bool includeChecksum, bool fullAsciiMode)
         {
@@ -32,13 +32,13 @@ namespace Barcoder
                 if (i++ != 0)
                     result.AddBit(false);
 
-                if (!Code39Constants.EncodingTable.TryGetValue(r, out (int value, bool[] data) info))
+                if (!Constants.EncodingTable.TryGetValue(r, out (int value, bool[] data) info))
                     throw new InvalidOperationException("Invalid data! Try full ASCII mode");
 
                 result.AddBit(info.data);
             }
 
-            return new Base1DCodeIntCS(result, BarcodeType.Code39, content, checksum, Code39Constants.Margin);
+            return new Base1DCodeIntCS(result, BarcodeType.Code39, content, checksum, Constants.Margin);
         }
 
         private static string Prepare(string content)
@@ -49,7 +49,7 @@ namespace Barcoder
                 if (r > 127)
                     throw new InvalidOperationException("Only ASCII strings can be encoded");
 
-                if (Code39Constants.ExtendedTable.TryGetValue(r, out var val))
+                if (Constants.ExtendedTable.TryGetValue(r, out var val))
                     result.Append(val);
                 else
                     result.Append(r);
@@ -63,13 +63,13 @@ namespace Barcoder
             var sum = 0;
             foreach (char r in content)
             {
-                if (!Code39Constants.EncodingTable.TryGetValue(r, out (int value, bool[] data) info) || info.value < 0)
+                if (!Constants.EncodingTable.TryGetValue(r, out (int value, bool[] data) info) || info.value < 0)
                     return '#';
                 sum += info.value;
             }
 
             sum = sum % 43;
-            foreach (KeyValuePair<char, (int value, bool[] data)> kvp in Code39Constants.EncodingTable)
+            foreach (KeyValuePair<char, (int value, bool[] data)> kvp in Constants.EncodingTable)
             {
                 if (kvp.Value.value == sum)
                     return kvp.Key;

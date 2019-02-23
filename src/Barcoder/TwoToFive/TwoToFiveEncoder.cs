@@ -2,9 +2,9 @@ using System;
 using System.Text.RegularExpressions;
 using Barcoder.Utils;
 
-namespace Barcoder
+namespace Barcoder.TwoToFive
 {
-    public static class TwoToFive
+    public static class TwoToFiveEncoder
     {
         public static IBarcodeIntCS Encode(string content, bool interleaved, bool includeChecksum)
         {
@@ -21,7 +21,7 @@ namespace Barcoder
             if (interleaved && (content.Length % 2) == 1)
                 throw new InvalidOperationException("Can only encode an even number of digits in interleaved mode");
 
-            TwoToFiveConstants.EncodeInfo mode = TwoToFiveConstants.Modes[interleaved];
+            Constants.EncodeInfo mode = Constants.Modes[interleaved];
             var resBits = new BitList();
             resBits.AddBit(mode.Start);
 
@@ -38,18 +38,18 @@ namespace Barcoder
                     }
                     else
                     {
-                        a = TwoToFiveConstants.EncodingTable[lastChar.Value];
-                        b = TwoToFiveConstants.EncodingTable[r];
+                        a = Constants.EncodingTable[lastChar.Value];
+                        b = Constants.EncodingTable[r];
                         lastChar = null;
                     }
                 }
                 else
                 {
-                    a = TwoToFiveConstants.EncodingTable[r];
-                    b = TwoToFiveConstants.NonInterleavedSpace;
+                    a = Constants.EncodingTable[r];
+                    b = Constants.NonInterleavedSpace;
                 }
 
-                for (var i = 0; i < TwoToFiveConstants.PatternWidth; i++)
+                for (var i = 0; i < Constants.PatternWidth; i++)
                 {
                     for (var x = 0; x < mode.Widths[a[i]]; x++)
                         resBits.AddBit(true);
@@ -60,7 +60,7 @@ namespace Barcoder
 
             resBits.AddBit(mode.End);
 
-            return new Base1DCodeIntCS(resBits, interleaved ? BarcodeType.TwoOfFiveInterleaved : BarcodeType.TwoOfFive, content, checksum, TwoToFiveConstants.Margin);
+            return new Base1DCodeIntCS(resBits, interleaved ? BarcodeType.TwoOfFiveInterleaved : BarcodeType.TwoOfFive, content, checksum, Constants.Margin);
         }
 
         private static char GetChecksum(string content)

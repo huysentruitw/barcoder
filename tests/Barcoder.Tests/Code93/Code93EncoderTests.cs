@@ -1,10 +1,11 @@
 using System;
+using Barcoder.Code93;
 using FluentAssertions;
 using Xunit;
 
-namespace Barcoder.Tests
+namespace Barcoder.Tests.Code93
 {
-    public sealed class Code93Tests
+    public sealed class Code93EncoderTests
     {
         [Theory]
         [InlineData("ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789",
@@ -15,7 +16,7 @@ namespace Barcoder.Tests
             "101001110101010000101010111101")]
         public void Encode(string data, string testResult)
         {
-            IBarcode code = Code93.Encode(data, true, false);
+            IBarcode code = Code93Encoder.Encode(data, true, false);
 
             code.Bounds.X.Should().Be(testResult.Length);
             code.Bounds.Y.Should().Be(1);
@@ -32,7 +33,7 @@ namespace Barcoder.Tests
         [Fact]
         public void Encode_ContainsStarInNonAsciiMode_ShouldThrowException()
         {
-            Action action = () => Code93.Encode("01*", false, false);
+            Action action = () => Code93Encoder.Encode("01*", false, false);
             action.Should().Throw<InvalidOperationException>()
                 .WithMessage("Invalid data! Try full ASCII mode");
         }
@@ -40,7 +41,7 @@ namespace Barcoder.Tests
         [Fact]
         public void Encode_UnderscoreInNonAsciiMode_ShouldThrowException()
         {
-            Action action = () => Code93.Encode("_", false, false);
+            Action action = () => Code93Encoder.Encode("_", false, false);
             action.Should().Throw<InvalidOperationException>()
                 .WithMessage("Invalid data");
         }
@@ -48,14 +49,14 @@ namespace Barcoder.Tests
         [Fact]
         public void Encode_UnderscoreInAsciiMode_ShouldNotThrowException()
         {
-            Action action = () => Code93.Encode("_", false, true);
+            Action action = () => Code93Encoder.Encode("_", false, true);
             action.Should().NotThrow();
         }
 
         [Fact]
         public void Encode_NonAsciiCharacterInAsciiMode_ShouldThrowException()
         {
-            Action action = () => Code93.Encode("ù", false, true);
+            Action action = () => Code93Encoder.Encode("ù", false, true);
             action.Should().Throw<InvalidOperationException>()
                 .WithMessage("Only ASCII strings can be encoded");
         }

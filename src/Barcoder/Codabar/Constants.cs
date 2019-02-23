@@ -1,8 +1,8 @@
 using System.Collections.Generic;
 
-namespace Barcoder
+namespace Barcoder.Codebar
 {
-    internal static class CodabarConstants
+    internal static class Constants
     {
         public static readonly IReadOnlyDictionary<char, bool[]> EncodingTable = new Dictionary<char, bool[]>
         {

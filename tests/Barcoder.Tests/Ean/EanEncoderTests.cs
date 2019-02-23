@@ -1,10 +1,11 @@
 using System;
+using Barcoder.Ean;
 using FluentAssertions;
 using Xunit;
 
-namespace Barcoder.Tests
+namespace Barcoder.Tests.Ean
 {
-    public sealed class EanTests
+    public sealed class EanEncoderTests
     {
         [Theory]
         [InlineData("5901234123457", "10100010110100111011001100100110111101001110101010110011011011001000010101110010011101000100101", BarcodeType.EAN13, true)]
@@ -12,7 +13,7 @@ namespace Barcoder.Tests
         [InlineData("5512345", "1010110001011000100110010010011010101000010101110010011101000100101", BarcodeType.EAN8, false)]
         public void Encode(string testCode, string testResult, string kind, bool checkContent)
         {
-            IBarcodeIntCS code = Ean.Encode(testCode);
+            IBarcodeIntCS code = EanEncoder.Encode(testCode);
             if (checkContent)
                 code.Content.Should().Be(testCode);
 
@@ -31,7 +32,7 @@ namespace Barcoder.Tests
         [Fact]
         public void Encode_InvalidChecksum_ShouldThrowException()
         {
-            Action action = () => Ean.Encode("55123458");
+            Action action = () => EanEncoder.Encode("55123458");
             action.Should().Throw<InvalidOperationException>()
                 .WithMessage("Checksum mismatch");
         }
@@ -39,7 +40,7 @@ namespace Barcoder.Tests
         [Fact]
         public void Encode_InvalidCode_ShouldThrowException()
         {
-            Action action = () => Ean.Encode("invalid");
+            Action action = () => EanEncoder.Encode("invalid");
             action.Should().Throw<InvalidOperationException>()
                 .WithMessage("Can only encode numerical digits (0-9)");
         }
@@ -47,9 +48,9 @@ namespace Barcoder.Tests
         [Fact]
         public void Encode_InvalidContentLength_ShouldThrowException()
         {
-            Action action = () => Ean.Encode("123");
+            Action action = () => EanEncoder.Encode("123");
             action.Should().Throw<InvalidOperationException>()
-                .WithMessage("Invalid content length. Should be 7 or 12 if the code does not include a checksum, 8 or 8 if the code already includes a checksum");
+                .WithMessage("Invalid content length. Should be 7 or 12 if the code does not include a checksum, 8 or 13 if the code already includes a checksum");
         }
     }
 }

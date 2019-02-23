@@ -1,8 +1,8 @@
 using System.Collections.Generic;
 
-namespace Barcoder
+namespace Barcoder.Ean
 {
-    internal static class EanConstants
+    internal static class Constants
     {
         public static readonly IReadOnlyDictionary<char, EncodedNumber> EncodingTable = new Dictionary<char, EncodedNumber>
         {
