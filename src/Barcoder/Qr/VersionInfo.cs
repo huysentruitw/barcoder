@@ -1,7 +1,8 @@
 using System;
 using System.Linq;
+using Barcoder.Qr.InternalEncoders;
 
-namespace Barcoder.Qr.InternalEncoders
+namespace Barcoder.Qr
 {
     internal sealed class VersionInfo
     {

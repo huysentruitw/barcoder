@@ -3,7 +3,7 @@ using Barcoder.Qr.InternalEncoders;
 using FluentAssertions;
 using Xunit;
 
-namespace Barcoder.Tests.Qr.InternalEncoders
+namespace Barcoder.Tests.Qr
 {
     public sealed class VersionInfoTests
     {
