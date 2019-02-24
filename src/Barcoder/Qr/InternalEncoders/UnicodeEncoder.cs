@@ -1,5 +1,6 @@
 using System;
 using Barcoder.Utils;
+using TextEncoding = System.Text.Encoding;
 
 namespace Barcoder.Qr.InternalEncoders
 {
@@ -7,7 +8,21 @@ namespace Barcoder.Qr.InternalEncoders
     {
         public override (BitList, VersionInfo) Encode(string content, ErrorCorrectionLevel errorCorrectionLevel)
         {
-            throw new NotImplementedException();
+            if (content == null) throw new ArgumentNullException(nameof(content));
+            byte[] data = TextEncoding.UTF8.GetBytes(content);
+
+            EncodingMode encodingMode = EncodingMode.Byte;
+            var versionInfo = VersionInfo.FindSmallestVersionInfo(errorCorrectionLevel, encodingMode, data.Length * 8);
+            if (versionInfo == null)
+                throw new InvalidOperationException("Too much data to encode");
+
+            var result = new BitList();
+            result.AddBits((uint)encodingMode, 4);
+            result.AddBits((uint)content.Length, versionInfo.CharCountBits(encodingMode));
+            foreach (var b in data)
+                result.AddByte(b);
+            AddPaddingAndTerminator(ref result, versionInfo);
+            return (result, versionInfo);
         }
     }
 }
