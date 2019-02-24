@@ -18,12 +18,12 @@ namespace Barcoder.Tests.Qr.InternalEncoders
             var numericEncoder = new NumericEncoder();
 
             // Act
-            (BitList bitList, VersionInfo versionInfo) = numericEncoder.Encode(content, ErrorCorrectionLevel.H);
+            (BitList bits, VersionInfo versionInfo) = numericEncoder.Encode(content, ErrorCorrectionLevel.H);
 
             // Assert
-            bitList.Should().NotBeNull();
+            bits.Should().NotBeNull();
             versionInfo.Should().NotBeNull();
-            bitList.GetBytes().Should().BeEquivalentTo(expectedBytes);
+            bits.GetBytes().Should().BeEquivalentTo(expectedBytes);
         }
 
         [Fact]

@@ -16,13 +16,13 @@ namespace Barcoder.Qr.InternalEncoders
             if (versionInfo == null)
                 throw new InvalidOperationException("Too much data to encode");
 
-            var result = new BitList();
-            result.AddBits((uint)encodingMode, 4);
-            result.AddBits((uint)content.Length, versionInfo.CharCountBits(encodingMode));
+            var bits = new BitList();
+            bits.AddBits((uint)encodingMode, 4);
+            bits.AddBits((uint)content.Length, versionInfo.CharCountBits(encodingMode));
             foreach (var b in data)
-                result.AddByte(b);
-            AddPaddingAndTerminator(ref result, versionInfo);
-            return (result, versionInfo);
+                bits.AddByte(b);
+            AddPaddingAndTerminator(ref bits, versionInfo);
+            return (bits, versionInfo);
         }
     }
 }

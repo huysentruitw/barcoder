@@ -16,13 +16,13 @@ namespace Barcoder.Tests.Qr.InternalEncoders
             var unicodeEncoder = new UnicodeEncoder();
 
             // Act
-            (BitList bitList, VersionInfo versionInfo) = unicodeEncoder.Encode("A", ErrorCorrectionLevel.H);
+            (BitList bits, VersionInfo versionInfo) = unicodeEncoder.Encode("A", ErrorCorrectionLevel.H);
 
             // Assert
-            bitList.Should().NotBeNull();
+            bits.Should().NotBeNull();
             versionInfo.Should().NotBeNull();
             versionInfo.Version.Should().Be(1);
-            bitList.GetBytes().Should().BeEquivalentTo(new byte[] { 64, 20, 16, 236, 17, 236, 17, 236, 17 });
+            bits.GetBytes().Should().BeEquivalentTo(new byte[] { 64, 20, 16, 236, 17, 236, 17, 236, 17 });
         }
 
         [Fact]

@@ -22,9 +22,9 @@ namespace Barcoder.Qr.InternalEncoders
             if (versionInfo == null)
                 throw new InvalidOperationException("Too much data to encode");
 
-            var result = new BitList();
-            result.AddBits((uint)encodingMode, 4);
-            result.AddBits((uint)content.Length, versionInfo.CharCountBits(encodingMode));
+            var bits = new BitList();
+            bits.AddBits((uint)encodingMode, 4);
+            bits.AddBits((uint)content.Length, versionInfo.CharCountBits(encodingMode));
 
             var encoder = new Queue<int>(content.Select(x => CharSet.IndexOf(x)));
             for (int i = 0; i < content.Length / 2; i++)
@@ -33,7 +33,7 @@ namespace Barcoder.Qr.InternalEncoders
                 int c2 = encoder.Dequeue();
                 if (c1 < 0 || c2 < 0)
                     throw new InvalidOperationException($"{content} can not be ancoded as {encodingMode}");
-                result.AddBits((uint)(c1 * 45 + c2), 11);
+                bits.AddBits((uint)(c1 * 45 + c2), 11);
             }
 
             if (contentLengthIsOdd)
@@ -41,11 +41,11 @@ namespace Barcoder.Qr.InternalEncoders
                 int c = encoder.Dequeue();
                 if (c < 0)
                     throw new InvalidOperationException($"{content} can not be ancoded as {encodingMode}");
-                result.AddBits((uint)c, 6);
+                bits.AddBits((uint)c, 6);
             }
 
-            AddPaddingAndTerminator(ref result, versionInfo);
-            return (result, versionInfo);
+            AddPaddingAndTerminator(ref bits, versionInfo);
+            return (bits, versionInfo);
         }
     }
 }

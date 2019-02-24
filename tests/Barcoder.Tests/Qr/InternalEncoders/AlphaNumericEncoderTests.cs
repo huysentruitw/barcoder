@@ -16,13 +16,13 @@ namespace Barcoder.Tests.Qr.InternalEncoders
             var alphaNumericEncoder = new AlphaNumericEncoder();
 
             // Act
-            (BitList bitList, VersionInfo versionInfo) = alphaNumericEncoder.Encode("HELLO WORLD", ErrorCorrectionLevel.M);
+            (BitList bits, VersionInfo versionInfo) = alphaNumericEncoder.Encode("HELLO WORLD", ErrorCorrectionLevel.M);
 
             // Assert
-            bitList.Should().NotBeNull();
+            bits.Should().NotBeNull();
             versionInfo.Should().NotBeNull();
             versionInfo.Version.Should().Be(1);
-            bitList.GetBytes().Should().BeEquivalentTo(new byte[] { 32, 91, 11, 120, 209, 114, 220, 77, 67, 64, 236, 17, 236, 17, 236, 17 });
+            bits.GetBytes().Should().BeEquivalentTo(new byte[] { 32, 91, 11, 120, 209, 114, 220, 77, 67, 64, 236, 17, 236, 17, 236, 17 });
         }
 
         [Fact]
@@ -32,10 +32,10 @@ namespace Barcoder.Tests.Qr.InternalEncoders
             var alphaNumericEncoder = new AlphaNumericEncoder();
 
             // Act
-            (BitList bitList, VersionInfo versionInfo) = alphaNumericEncoder.Encode(new string('A', 4296), ErrorCorrectionLevel.L);
+            (BitList bits, VersionInfo versionInfo) = alphaNumericEncoder.Encode(new string('A', 4296), ErrorCorrectionLevel.L);
 
             // Assert
-            bitList.Should().NotBeNull();
+            bits.Should().NotBeNull();
             versionInfo.Should().NotBeNull();
         }
 
