@@ -10,7 +10,7 @@ namespace Barcoder.Tests.Qr
     public sealed class QrEncoderTests
     {
         [Fact]
-        public void Encode()
+        public void Encode_ValidUnicodeContent_ShouldEncodeQrCodeCorrectly()
         {
             // Arrange
             var content = "hello world";
