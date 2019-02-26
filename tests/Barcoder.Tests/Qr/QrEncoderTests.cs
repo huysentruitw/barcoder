@@ -10,6 +10,17 @@ namespace Barcoder.Tests.Qr
     public sealed class QrEncoderTests
     {
         [Fact]
+        public void Encode_InvalidEncoding_ShouldThrowException()
+        {
+            // Act
+            Action action = () => QrEncoder.Encode("test", ErrorCorrectionLevel.H, (Encoding)255);
+
+            // Assert
+            action.Should().Throw<InvalidOperationException>()
+                .WithMessage("Unknown encoding type 255");
+        }
+
+        [Fact]
         public void Encode_ValidUnicodeContent_ShouldEncodeQrCodeCorrectly()
         {
             // Arrange
