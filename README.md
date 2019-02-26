@@ -15,13 +15,13 @@ Supported Barcode Types:
 * Code 128
 * EAN 8
 * EAN 13
+* QR Code
 
 To be ported:
 
 * Aztec Code
 * Data Matrix
 * PDF 417
-* QR Code
 
 ## NuGet package
 
