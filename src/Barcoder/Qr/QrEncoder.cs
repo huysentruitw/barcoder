@@ -58,9 +58,9 @@ namespace Barcoder.Qr
             // Timing pattern
             for (int i = 0; i < dimension; i++)
             {
-                if (!occupied.At(i, 6))
+                if (!occupied.Get(i, 6))
                     setAll(i, 6, i % 2 == 0);
-                else
+                if (!occupied.Get(6, i))
                     setAll(6, i, i % 2 == 0);
             }
 
