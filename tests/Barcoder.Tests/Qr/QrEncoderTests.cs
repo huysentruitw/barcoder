@@ -1,0 +1,76 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using Barcoder.Qr;
+using FluentAssertions;
+using Xunit;
+
+namespace Barcoder.Tests.Qr
+{
+    public sealed class QrEncoderTests
+    {
+        [Fact]
+        public void Encode()
+        {
+            // Arrange
+            var content = "hello world";
+            var expectedDataBits = ImageStringToBools(@"
+                +++++++.+.+.+...+.+++++++
+                +.....+.++...+++..+.....+
+                +.+++.+.+.+.++.++.+.+++.+
+                +.+++.+....++.++..+.+++.+
+                +.+++.+..+...++.+.+.+++.+
+                +.....+.+..+..+++.+.....+
+                +++++++.+.+.+.+.+.+++++++
+                ........++..+..+.........
+                ..+++.+.+++.+.++++++..+++
+                +++..+..+...++.+...+..+..
+                +...+.++++....++.+..++.++
+                ++.+.+.++...+...+.+....++
+                ..+..+++.+.+++++.++++++++
+                +.+++...+..++..++..+..+..
+                +.....+..+.+.....+++++.++
+                +.+++.....+...+.+.+++...+
+                +.+..+++...++.+.+++++++..
+                ........+....++.+...+.+..
+                +++++++......++++.+.+.+++
+                +.....+....+...++...++.+.
+                +.+++.+.+.+...+++++++++..
+                +.+++.+.++...++...+.++..+
+                +.+++.+.++.+++++..++.+..+
+                +.....+..+++..++.+.++...+
+                +++++++....+..+.+..+..+++
+            ");
+
+            // Act
+            var qr = QrEncoder.Encode(content, ErrorCorrectionLevel.H, Encoding.Unicode) as QrCode;
+
+            // Assert
+            qr.Should().NotBeNull();
+            expectedDataBits.Length.Should().Be(qr.Dimension * qr.Dimension);
+            for (int i = 0; i < expectedDataBits.Length; i++)
+            {
+                int x = i % qr.Dimension;
+                int y = i / qr.Dimension;
+                qr.Get(x, y).Should().Be(expectedDataBits[i], $"of expected bit on index {i}");
+            }
+        }
+
+        private static bool[] ImageStringToBools(string imageString)
+        {
+            var lines = imageString?
+                .Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries)
+                .Select(x => x.Trim())
+                .Where(x => !string.IsNullOrEmpty(x))
+                .ToArray();
+
+            if (lines.Length <= 0) throw new InvalidOperationException($"No data in {nameof(imageString)}");
+            var dimension = lines.First().Length;
+            if (lines.Length != dimension) throw new InvalidOperationException("Not a square QR code");
+            foreach (var line in lines)
+                if (line.Length != dimension)
+                    throw new InvalidOperationException("Not all lines have the same length");
+            return lines.SelectMany(x => x).Select(x => x == '+').ToArray();
+        }
+    }
+}
