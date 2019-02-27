@@ -28,7 +28,7 @@ namespace Barcoder.Renderer.Svg.Tests
             svg.Length.Should().BeGreaterOrEqualTo(0);
 
             string expected;
-            using (Stream stream = typeof(SvgRendererTests).Assembly.GetManifestResourceStream("Barcoder.Renderer.Svg.Tests.ExpectedSvgOutput.txt"))
+            using (Stream stream = typeof(SvgRendererTests).Assembly.GetManifestResourceStream("Barcoder.Renderer.Svg.Tests.Barcode1D.ExpectedSvgOutput.txt"))
             using (var reader = new StreamReader(stream))
                 expected = reader.ReadToEnd().Replace("\r", "").Replace("\n", "");
 
