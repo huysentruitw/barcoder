@@ -11,7 +11,7 @@ namespace Barcoder.Renderer.Svg.Tests
         public void Render_Barcode1D()
         {
             // Arrange
-            IBarcodeIntCS barcode = Code128Encoder.Encode("Wikipedia");
+            IBarcode barcode = Code128Encoder.Encode("Wikipedia");
             var renderer = new SvgRenderer();
 
             // Act
