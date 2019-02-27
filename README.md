@@ -36,7 +36,7 @@ To install the SvgRenderer:
 ## Usage
 
 ```csharp
-var barcode = Code128.Encode("FOO/BAR/12345");
+var barcode = Code128Encoder.Encode("FOO/BAR/12345");
 var renderer = new SvgRenderer();
 
 using (var stream = new MemoryStream())
