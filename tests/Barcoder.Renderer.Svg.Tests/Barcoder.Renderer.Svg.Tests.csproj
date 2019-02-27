@@ -7,11 +7,13 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="Barcode1D.ExpectedSvgOutput.txt" />
+    <None Remove="Code128.ExpectedSvgOutput.txt" />
+    <None Remove="QrCode.ExpectedSvgOutput.txt" />
   </ItemGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="Barcode1D.ExpectedSvgOutput.txt" />
+    <EmbeddedResource Include="QrCode.ExpectedSvgOutput.txt" />
+    <EmbeddedResource Include="Code128.ExpectedSvgOutput.txt" />
   </ItemGroup>
 
   <ItemGroup>

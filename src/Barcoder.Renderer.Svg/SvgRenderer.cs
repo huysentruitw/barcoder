@@ -66,7 +66,37 @@ namespace Barcoder.Renderer.Svg
 
         private static void Render2D(IBarcode barcode, Stream outputStream)
         {
-            throw new NotImplementedException();
+            var document = SvgDocument.Create();
+            document.ViewBox = new SvgViewBox
+            {
+                Left = 0,
+                Top = 0,
+                Width = barcode.Bounds.X + 2 * barcode.Margin,
+                Height = barcode.Bounds.Y + 2 * barcode.Margin
+            };
+            document.Fill = "#FFFFFF";
+            document.Stroke = "#000000";
+            document.StrokeWidth = .05;
+            document.StrokeLineCap = SvgStrokeLineCap.Butt;
+
+            SvgGroup group = document.AddGroup();
+            group.Fill = "#000000";
+            for (int y = 0; y < barcode.Bounds.Y; y++)
+            {
+                for (int x = 0; x < barcode.Bounds.X; x++)
+                {
+                    if (barcode.At(x, y))
+                    {
+                        SvgRect rect = group.AddRect();
+                        rect.X = x + barcode.Margin;
+                        rect.Y = y + barcode.Margin;
+                        rect.Width = 1;
+                        rect.Height = 1;
+                    }
+                }
+            }
+
+            document.Save(outputStream);
         }
     }
 }

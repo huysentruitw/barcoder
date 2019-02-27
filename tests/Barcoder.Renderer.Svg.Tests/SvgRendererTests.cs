@@ -1,5 +1,7 @@
 using System.IO;
 using Barcoder.Code128;
+using Barcoder.Qr;
+using Barcoder.Renderers;
 using FluentAssertions;
 using Xunit;
 
@@ -11,29 +13,50 @@ namespace Barcoder.Renderer.Svg.Tests
         public void Render_Barcode1D()
         {
             // Arrange
-            IBarcode barcode = Code128Encoder.Encode("Wikipedia");
             var renderer = new SvgRenderer();
+            IBarcode barcode = Code128Encoder.Encode("Wikipedia");
+            string expected = GetExpectedSvgOutput("Code128.ExpectedSvgOutput.txt");
 
             // Act
-            string svg;
+            string svg = RenderBarcodeToString(renderer, barcode);
+
+            // Assert
+            svg.Length.Should().BeGreaterOrEqualTo(0);
+            svg.Should().Be(expected);
+        }
+
+        [Fact]
+        public void Render_Barcode2D()
+        {
+            // Arrange
+            var renderer = new SvgRenderer();
+            IBarcode barcode = QrEncoder.Encode("Hello Unicode\nHave a nice day!", ErrorCorrectionLevel.L, Encoding.Unicode);
+            string expected = GetExpectedSvgOutput("QrCode.ExpectedSvgOutput.txt");
+
+            // Act
+            string svg = RenderBarcodeToString(renderer, barcode);
+
+            // Assert
+            svg.Length.Should().BeGreaterOrEqualTo(0);
+            svg.Should().Be(expected);
+        }
+
+        private static string RenderBarcodeToString(IRenderer renderer, IBarcode barcode)
+        {
             using (var stream = new MemoryStream())
             using (var reader = new StreamReader(stream))
             {
                 renderer.Render(barcode, stream);
                 stream.Position = 0;
-                svg = reader.ReadToEnd();
+                return reader.ReadToEnd().Replace("\r", "").Replace("\n", "");
             }
+        }
 
-            // Assert
-            svg.Length.Should().BeGreaterOrEqualTo(0);
-
-            string expected;
-            using (Stream stream = typeof(SvgRendererTests).Assembly.GetManifestResourceStream("Barcoder.Renderer.Svg.Tests.Barcode1D.ExpectedSvgOutput.txt"))
+        private static string GetExpectedSvgOutput(string resourceName)
+        {
+            using (Stream stream = typeof(SvgRendererTests).Assembly.GetManifestResourceStream($"Barcoder.Renderer.Svg.Tests.{resourceName}"))
             using (var reader = new StreamReader(stream))
-                expected = reader.ReadToEnd().Replace("\r", "").Replace("\n", "");
-
-            var actual = svg.Replace("\r", "").Replace("\n", "");
-            actual.Should().Be(expected);
+                return reader.ReadToEnd().Replace("\r", "").Replace("\n", "");
         }
     }
 }
