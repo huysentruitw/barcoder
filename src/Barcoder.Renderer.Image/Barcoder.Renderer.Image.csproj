@@ -1,0 +1,25 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>net472;netstandard2.0</TargetFrameworks>
+    <Title>Barcoder.Renderer.Image</Title>
+    <Description>Image Renderer for Barcoder (.NET Framework, .NET Standard and .NET Core).</Description>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Company>Wouter Huysentruit</Company>
+    <Version>1.0.0-beta0006</Version>
+    <Authors>Wouter Huysentruit</Authors>
+    <PackageProjectUrl>https://github.com/huysentruitw/barcoder</PackageProjectUrl>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <RepositoryType>git</RepositoryType>
+    <RepositoryUrl>https://github.com/huysentruitw/barcoder</RepositoryUrl>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="SixLabors.ImageSharp.Drawing" Version="1.0.0-beta0006" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Barcoder\Barcoder.csproj" />
+  </ItemGroup>
+
+</Project>
