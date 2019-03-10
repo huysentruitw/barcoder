@@ -9,6 +9,8 @@ namespace Barcoder.Renderer.Svg
     {
         public void Render(IBarcode barcode, Stream outputStream)
         {
+            barcode = barcode ?? throw new ArgumentNullException(nameof(barcode));
+            outputStream = outputStream ?? throw new ArgumentNullException(nameof(outputStream));
             if (barcode.Bounds.Y == 1)
                 Render1D(barcode, outputStream);
             else if (barcode.Bounds.Y > 1)

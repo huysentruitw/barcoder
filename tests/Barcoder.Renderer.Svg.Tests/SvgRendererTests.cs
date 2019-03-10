@@ -1,14 +1,46 @@
+using System;
 using System.IO;
 using Barcoder.Code128;
 using Barcoder.Qr;
 using Barcoder.Renderers;
 using FluentAssertions;
+using Moq;
 using Xunit;
 
 namespace Barcoder.Renderer.Svg.Tests
 {
     public class SvgRendererTests
     {
+        [Fact]
+        public void Render_PassNullAsBarcode_ShouldThrowException()
+        {
+            // Arrange
+            var renderer = new SvgRenderer();
+            var stream = new MemoryStream();
+
+            // Act
+            Action action = () => renderer.Render(null, stream);
+
+            // Assert
+            action.Should().Throw<ArgumentNullException>()
+                .And.ParamName.Should().Be("barcode");
+        }
+
+        [Fact]
+        public void Render_PassNullAsOutputStream_ShouldThrowException()
+        {
+            // Arrange
+            var renderer = new SvgRenderer();
+            var barcodeMock = new Mock<IBarcode>();
+
+            // Act
+            Action action = () => renderer.Render(barcodeMock.Object, null);
+
+            // Assert
+            action.Should().Throw<ArgumentNullException>()
+                .And.ParamName.Should().Be("outputStream");
+        }
+
         [Fact]
         public void Render_Barcode1D()
         {
