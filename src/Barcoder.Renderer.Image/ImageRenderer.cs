@@ -1,17 +1,25 @@
 using System;
 using System.IO;
+using System.Numerics;
 using Barcoder.Renderers;
+using SixLabors.ImageSharp.Formats.Png;
+using SixLabors.ImageSharp.PixelFormats;
+using SixLabors.ImageSharp.Processing;
+using ImageSharp = SixLabors.ImageSharp;
 
 namespace Barcoder.Renderer.Image
 {
     public sealed class ImageRenderer : IRenderer
     {
         private readonly int _pixelSize;
+        private readonly int _barHeightFor1DBarcode;
 
-        public ImageRenderer(int pixelSize = 10)
+        public ImageRenderer(int pixelSize = 10, int barHeightFor1DBarcode = 100)
         {
             if (pixelSize <= 0) throw new ArgumentOutOfRangeException(nameof(pixelSize), "Value must be larger than zero");
+            if (barHeightFor1DBarcode <= 0) throw new ArgumentOutOfRangeException(nameof(barHeightFor1DBarcode), "Value must be larger than zero");
             _pixelSize = pixelSize;
+            _barHeightFor1DBarcode = barHeightFor1DBarcode;
         }
 
         public void Render(IBarcode barcode, Stream outputStream)
@@ -26,9 +34,31 @@ namespace Barcoder.Renderer.Image
                 throw new NotSupportedException($"Y value of {barcode.Bounds.Y} is invalid");
         }
 
-        private static void Render1D(IBarcode barcode, Stream outputStream)
+        private void Render1D(IBarcode barcode, Stream outputStream)
         {
-            throw new NotImplementedException();
+            int width = (barcode.Bounds.X + 2 * barcode.Margin) * _pixelSize;
+            int height = _barHeightFor1DBarcode + 2 * barcode.Margin * _pixelSize;
+
+            using (var image = new ImageSharp.Image<Gray8>(width, height))
+            {
+                image.Mutate(ctx =>
+                {
+                    var black = new Gray8(0);
+                    ctx.Fill(new Gray8(255));
+                    for (var x = 0; x < barcode.Bounds.X; x++)
+                    {
+                        if (!barcode.At(x, 0)) continue;
+                        ctx.FillPolygon(
+                            black,
+                            new Vector2((barcode.Margin + x) * _pixelSize, barcode.Margin * _pixelSize),
+                            new Vector2((barcode.Margin + x + 1) * _pixelSize, barcode.Margin * _pixelSize),
+                            new Vector2((barcode.Margin + x + 1) * _pixelSize, (_barHeightFor1DBarcode + barcode.Margin) * _pixelSize),
+                            new Vector2((barcode.Margin + x) * _pixelSize, (_barHeightFor1DBarcode + barcode.Margin) * _pixelSize));
+                    }
+                });
+
+                image.Save(outputStream, new PngEncoder());
+            }
         }
 
         private static void Render2D(IBarcode barcode, Stream outputStream)

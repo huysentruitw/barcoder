@@ -1,5 +1,8 @@
 using System;
 using System.IO;
+using Barcoder.Code128;
+using Barcoder.Qr;
+using Barcoder.Renderers;
 using FluentAssertions;
 using Moq;
 using Xunit;
@@ -36,6 +39,29 @@ namespace Barcoder.Renderer.Image.Tests
             // Assert
             action.Should().Throw<ArgumentNullException>()
                 .And.ParamName.Should().Be("outputStream");
+        }
+
+        [Fact]
+        public void Render_Barcode1D()
+        {
+            // Arrange
+            var renderer = new ImageRenderer();
+            IBarcode barcode = Code128Encoder.Encode("Wikipedia");
+
+            // Act
+            var data = RenderBarcodeToByteArray(renderer, barcode);
+
+            // Assert
+            data.Should().NotBeNull();
+        }
+
+        private static byte[] RenderBarcodeToByteArray(IRenderer renderer, IBarcode barcode)
+        {
+            using (var stream = new MemoryStream())
+            {
+                renderer.Render(barcode, stream);
+                return stream.ToArray();
+            }
         }
     }
 }
