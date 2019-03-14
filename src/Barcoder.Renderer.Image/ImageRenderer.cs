@@ -14,7 +14,7 @@ namespace Barcoder.Renderer.Image
         private readonly int _pixelSize;
         private readonly int _barHeightFor1DBarcode;
 
-        public ImageRenderer(int pixelSize = 10, int barHeightFor1DBarcode = 100)
+        public ImageRenderer(int pixelSize = 10, int barHeightFor1DBarcode = 40)
         {
             if (pixelSize <= 0) throw new ArgumentOutOfRangeException(nameof(pixelSize), "Value must be larger than zero");
             if (barHeightFor1DBarcode <= 0) throw new ArgumentOutOfRangeException(nameof(barHeightFor1DBarcode), "Value must be larger than zero");
@@ -37,7 +37,7 @@ namespace Barcoder.Renderer.Image
         private void Render1D(IBarcode barcode, Stream outputStream)
         {
             int width = (barcode.Bounds.X + 2 * barcode.Margin) * _pixelSize;
-            int height = _barHeightFor1DBarcode + 2 * barcode.Margin * _pixelSize;
+            int height = (_barHeightFor1DBarcode + 2 * barcode.Margin) * _pixelSize;
 
             using (var image = new ImageSharp.Image<Gray8>(width, height))
             {
