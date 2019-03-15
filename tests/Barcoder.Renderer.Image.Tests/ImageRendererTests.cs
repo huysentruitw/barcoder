@@ -6,6 +6,7 @@ using Barcoder.Renderers;
 using FluentAssertions;
 using Moq;
 using Xunit;
+using ImageSharp = SixLabors.ImageSharp;
 
 namespace Barcoder.Renderer.Image.Tests
 {
