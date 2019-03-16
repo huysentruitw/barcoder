@@ -56,6 +56,20 @@ namespace Barcoder.Renderer.Image.Tests
             data.Should().NotBeNull();
         }
 
+        [Fact]
+        public void Render_Barcode2D()
+        {
+            // Arrange
+            var renderer = new ImageRenderer();
+            IBarcode barcode = QrEncoder.Encode("Hello Unicode\nHave a nice day!", ErrorCorrectionLevel.L, Encoding.Unicode);
+
+            // Act
+            var data = RenderBarcodeToByteArray(renderer, barcode);
+
+            // Assert
+            data.Should().NotBeNull();
+        }
+
         private static byte[] RenderBarcodeToByteArray(IRenderer renderer, IBarcode barcode)
         {
             using (var stream = new MemoryStream())

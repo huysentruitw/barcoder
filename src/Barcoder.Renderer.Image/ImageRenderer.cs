@@ -11,6 +11,7 @@ namespace Barcoder.Renderer.Image
 {
     public sealed class ImageRenderer : IRenderer
     {
+        private readonly PngEncoder _pngEncoder = new PngEncoder();
         private readonly int _pixelSize;
         private readonly int _barHeightFor1DBarcode;
 
@@ -57,13 +58,38 @@ namespace Barcoder.Renderer.Image
                     }
                 });
 
-                image.Save(outputStream, new PngEncoder());
+                image.Save(outputStream, _pngEncoder);
             }
         }
 
-        private static void Render2D(IBarcode barcode, Stream outputStream)
+        private void Render2D(IBarcode barcode, Stream outputStream)
         {
-            throw new NotImplementedException();
+            int width = (barcode.Bounds.X + 2 * barcode.Margin) * _pixelSize;
+            int height = (barcode.Bounds.Y + 2 * barcode.Margin) * _pixelSize;
+
+            using (var image = new ImageSharp.Image<Gray8>(width, height))
+            {
+                image.Mutate(ctx =>
+                {
+                    var black = new Gray8(0);
+                    ctx.Fill(new Gray8(255));
+                    for (var y = 0; y < barcode.Bounds.Y; y++)
+                    {
+                        for (var x = 0; x < barcode.Bounds.X; x++)
+                        {
+                            if (!barcode.At(x, y)) continue;
+                            ctx.FillPolygon(
+                                black,
+                                new Vector2((barcode.Margin + x) * _pixelSize, (barcode.Margin + y) * _pixelSize),
+                                new Vector2((barcode.Margin + x + 1) * _pixelSize, (barcode.Margin + y) * _pixelSize),
+                                new Vector2((barcode.Margin + x + 1) * _pixelSize, (barcode.Margin + y + 1) * _pixelSize),
+                                new Vector2((barcode.Margin + x) * _pixelSize, (barcode.Margin + y + 1) * _pixelSize));
+                        }
+                    }
+                });
+
+                image.Save(outputStream, _pngEncoder);
+            }
         }
     }
 }
