@@ -2,7 +2,7 @@
 
 [![Build status](https://ci.appveyor.com/api/projects/status/x6dhc3m70nxj30mx/branch/master?svg=true)](https://ci.appveyor.com/project/huysentruitw/barcoder/branch/master)
 
-Lightweight Barcode Encoding Library for .NET Framework, .NET Standard and .NET Core.
+Lightweight Barcode Encoding Library for .NET Framework, .NET Standard and .NET Core. Additional packages are available for rendering the generated barcode to SVG or an image (currently only PNG is supported).
 
 Code ported from the GO project https://github.com/boombuler/barcode by [Florian Sundermann](https://github.com/boombuler).
 
