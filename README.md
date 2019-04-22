@@ -29,11 +29,15 @@ To install the main package:
 
     PM> Install-Package Barcoder
 
-To install the SvgRenderer:
+To install the SVG renderer:
 
     PM> Install-Package Barcoder.Renderer.Svg
 
-## Usage
+To install the image renderer:
+
+	PM> Install-Package Barcoder.Renderer.Image
+	
+## Usage - render to SVG
 
 ```csharp
 var barcode = Code128Encoder.Encode("FOO/BAR/12345");
@@ -47,6 +51,18 @@ using (var reader = new StreamReader(stream))
 
     string svg = reader.ReadToEnd();
     Console.WriteLine(svg);
+}
+```
+
+## Usage - render to PNG
+
+```csharp
+var barcode = QtEncoder.Encode("Hello World!");
+var renderer = new ImageRenderer();
+
+using (var stream = new FileStream("output.png", FileMode.Create))
+{
+    renderer.Render(barcode, stream);
 }
 ```
 
