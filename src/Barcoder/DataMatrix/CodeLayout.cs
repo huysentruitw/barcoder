@@ -102,5 +102,81 @@ namespace Barcoder.DataMatrix
             Set(1, Size.MatrixColumns - 2, value, 6);
             Set(1, Size.MatrixColumns - 1, value, 7);
         }
+
+        public void SetValues(byte[] data)
+        {
+            var idx = 0;
+            var row = 4;
+            var col = 0;
+
+            while (row < Size.MatrixRows || col < Size.MatrixColumns)
+            {
+                if (row == Size.MatrixRows && col == 0)
+                {
+                    Corner1(data[idx]);
+                    idx++;
+                }
+
+                if (row == Size.MatrixRows - 2 && col == 0 && (Size.MatrixColumns % 4) != 0)
+                {
+                    Corner2(data[idx]);
+                    idx++;
+                }
+
+                if (row == Size.MatrixRows - 2 && col == 0 && (Size.MatrixColumns % 8) == 4)
+                {
+                    Corner3(data[idx]);
+                    idx++;
+                }
+
+                if (row == Size.MatrixRows + 4 && col == 2 && (Size.MatrixColumns % 8) == 0)
+                {
+                    Corner4(data[idx]);
+                    idx++;
+                }
+
+                while (true)
+                {
+                    if (row < Size.MatrixRows && col >= 0 && !Occupied(row, col))
+                    {
+                        SetSimple(row, col, data[idx]);
+                        idx++;
+                    }
+
+                    row -= 2;
+                    col += 2;
+        
+                    if (row < 0 || col >= Size.MatrixColumns)
+                        break;
+                }
+
+                row += 1;
+                col += 3;
+
+                while (true)
+                {
+                    if (row >= 0 && col < Size.MatrixColumns && !Occupied(row, col))
+                    {
+                        SetSimple(row, col, data[idx]);
+                        idx++;
+                    }
+
+                    row += 2;
+                    col -= 2;
+
+                    if (row >= Size.MatrixRows || col < 0)
+                        break;
+                }
+
+                row += 3;
+                col += 1;
+            }
+
+            if (!Occupied(Size.MatrixRows - 1, Size.MatrixColumns - 1))
+            {
+                Set(Size.MatrixRows - 1, Size.MatrixColumns - 1, 255, 0);
+                Set(Size.MatrixRows - 2, Size.MatrixColumns - 2, 255, 0);
+            }
+        }
     }
 }
