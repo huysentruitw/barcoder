@@ -178,5 +178,77 @@ namespace Barcoder.DataMatrix
                 Set(Size.MatrixRows - 2, Size.MatrixColumns - 2, 255, 0);
             }
         }
+
+        public DataMatrixCode Merge()
+        {
+            var result = new DataMatrixCode(Size);
+
+            //dotted horizontal lines
+            for (int r = 0; r < Size.Rows; r += (Size.RegionRows + 2))
+            {
+                for (int c = 0; c < Size.Columns; c += 2)
+                {
+                    result.Set(c, r, true);
+                }
+            }
+
+            //solid horizontal line
+            for (int r = Size.RegionRows + 1; r < Size.Rows; r += (Size.RegionRows + 2))
+            {
+                for (int c = 0; c < Size.Columns; c++)
+                {
+                    result.Set(c, r, true);
+                }
+            }
+
+            //dotted vertical lines
+            for (int c = Size.RegionColumns + 1; c < Size.Columns; c += (Size.RegionColumns + 2))
+            {
+                for (int r = 1; r < Size.Rows; r += 2)
+                {
+                    result.Set(c, r, true);
+                }
+            }
+
+            //solid vertical line
+            for (int c = 0; c < Size.Columns; c += (Size.RegionColumns + 2))
+            {
+                for (int r = 0; r < Size.Rows; r++)
+                {
+                    result.Set(c, r, true);
+                }
+            }
+
+            var count = 0;
+
+            for (int hRegion = 0; hRegion < Size.RegionCountHorizontal; hRegion++)
+            {
+                for (int vRegion = 0; vRegion < Size.RegionCountVertical; vRegion++)
+                {
+                    for (int x = 0; x < Size.RegionColumns; x++)
+                    {
+                        int colMatrix = (Size.RegionColumns * hRegion) + x;
+                        int colResult = ((2 + Size.RegionColumns) * hRegion) + x + 1;
+
+                        for (int y = 0; y < Size.RegionRows; y++)
+                        {
+                            int rowMatrix = (Size.RegionRows * vRegion) + y;
+                            int rowResult = ((2 + Size.RegionRows) * vRegion) + y + 1;
+
+                            bool val = Matrix.GetBit(colMatrix + rowMatrix * Size.MatrixColumns);
+
+                            if (val)
+                            {
+                                count++;
+                            }
+
+                            result.Set(colResult, rowResult, val);
+                        }
+                    }
+                }
+            }
+
+            return result;
+        }
     }
 }
