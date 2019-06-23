@@ -80,7 +80,7 @@ namespace Barcoder.Tests.Qr
             foreach (var line in lines)
                 if (line.Length != dimension)
                     throw new InvalidOperationException("Not all lines have the same length");
-            return lines.SelectMany(x => x).Select(x => x == '+').ToArray();
+            return lines.SelectMany(x => x).Select(x => x != '.').ToArray();
         }
     }
 }
