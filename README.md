@@ -57,7 +57,7 @@ using (var reader = new StreamReader(stream))
 ## Usage - render to PNG
 
 ```csharp
-var barcode = QtEncoder.Encode("Hello World!");
+var barcode = QrEncoder.Encode("Hello World!");
 var renderer = new ImageRenderer();
 
 using (var stream = new FileStream("output.png", FileMode.Create))
