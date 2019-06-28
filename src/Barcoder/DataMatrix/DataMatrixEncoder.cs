@@ -28,7 +28,7 @@ namespace Barcoder.DataMatrix
             return codeLayout.Merge();
         }
 
-        private static byte[] EncodeText(string content)
+        internal static byte[] EncodeText(string content)
         {
             var result = new List<byte>();
             for (int i = 0; i < content.Length;)
@@ -58,7 +58,7 @@ namespace Barcoder.DataMatrix
             return result.ToArray();
         }
 
-        private static byte[] AddPadding(byte[] data, int toCount)
+        internal static byte[] AddPadding(byte[] data, int toCount)
         {
             var result = new List<byte>(data);
             if (result.Count < toCount)
