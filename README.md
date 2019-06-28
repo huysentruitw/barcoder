@@ -13,6 +13,7 @@ Supported Barcode Types:
 * Code 39
 * Code 93
 * Code 128
+* Data Matrix
 * EAN 8
 * EAN 13
 * QR Code
@@ -20,7 +21,6 @@ Supported Barcode Types:
 To be ported:
 
 * Aztec Code
-* Data Matrix
 * PDF 417
 
 ## NuGet package
