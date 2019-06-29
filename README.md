@@ -13,7 +13,7 @@ Supported Barcode Types:
 * Code 39
 * Code 93
 * Code 128
-* Data Matrix
+* Data Matrix (ECC 200)
 * EAN 8
 * EAN 13
 * QR Code
