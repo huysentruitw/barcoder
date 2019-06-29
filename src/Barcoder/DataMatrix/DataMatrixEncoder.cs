@@ -6,12 +6,23 @@ namespace Barcoder.DataMatrix
 {
     public static class DataMatrixEncoder
     {
-        public static IBarcode Encode(string content)
+        public static IBarcode Encode(string content, byte codeSize = 0)
         {
             var data = EncodeText(content);
 
-            CodeSize size = CodeSizes.All.FirstOrDefault(x => x.DataCodewords >= data.Length)
-                ?? throw new InvalidOperationException("Too much data to encode");
+            CodeSize size;
+            if (codeSize == 0)
+            {
+                size = CodeSizes.All.FirstOrDefault(x => x.DataCodewords >= data.Length)
+                   ?? throw new InvalidOperationException("Too much data to encode");
+            }
+            else
+            {
+                size = CodeSizes.All.FirstOrDefault(x => x.Rows == codeSize)
+                    ?? throw new ArgumentException($"CodeSize '{codeSize}' is not a valid size!", nameof(codeSize));
+                if (size.DataCodewords < data.Length)
+                    throw new ArgumentException($"The defined code size '{codeSize}' is to small!", nameof(codeSize));
+            }
 
             data = AddPadding(data, size.DataCodewords);
             data = ErrorCorrection.CalculateEcc(data, size);
@@ -21,11 +32,19 @@ namespace Barcoder.DataMatrix
             return code;
         }
 
-        private static DataMatrixCode Render(byte[] data, CodeSize size)
+        internal static byte[] AddPadding(byte[] data, int toCount)
         {
-            var codeLayout = new CodeLayout(size);
-            codeLayout.SetValues(data);
-            return codeLayout.Merge();
+            var result = new List<byte>(data);
+            if (result.Count < toCount)
+                result.Add(129);
+
+            while (result.Count < toCount)
+            {
+                int r = ((149 * (result.Count + 1)) % 253) + 1;
+                result.Add((byte)((129 + r) % 254));
+            }
+
+            return result.ToArray();
         }
 
         internal static byte[] EncodeText(string content)
@@ -58,19 +77,11 @@ namespace Barcoder.DataMatrix
             return result.ToArray();
         }
 
-        internal static byte[] AddPadding(byte[] data, int toCount)
+        private static DataMatrixCode Render(byte[] data, CodeSize size)
         {
-            var result = new List<byte>(data);
-            if (result.Count < toCount)
-                result.Add(129);
-
-            while (result.Count < toCount)
-            {
-                int r = ((149 * (result.Count + 1)) % 253) + 1;
-                result.Add((byte)((129 + r) % 254));
-            }
-
-            return result.ToArray();
+            var codeLayout = new CodeLayout(size);
+            codeLayout.SetValues(data);
+            return codeLayout.Merge();
         }
     }
 }
