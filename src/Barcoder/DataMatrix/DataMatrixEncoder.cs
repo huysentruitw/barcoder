@@ -6,12 +6,23 @@ namespace Barcoder.DataMatrix
 {
     public static class DataMatrixEncoder
     {
-        public static IBarcode Encode(string content)
+        public static IBarcode Encode(string content, byte codeSize = 0)
         {
             var data = EncodeText(content);
 
-            CodeSize size = CodeSizes.All.FirstOrDefault(x => x.DataCodewords >= data.Length)
-                ?? throw new InvalidOperationException("Too much data to encode");
+            CodeSize size;
+            if (codeSize == 0)
+            {
+                size = CodeSizes.All.FirstOrDefault(x => x.DataCodewords >= data.Length)
+                   ?? throw new InvalidOperationException("Too much data to encode");
+            }
+            else
+            {
+                size = CodeSizes.All.FirstOrDefault(x => x.Rows == codeSize)
+                    ?? throw new ArgumentException($"CodeSize '{codeSize}' is not a valid size!", nameof(codeSize));
+                if (size.DataCodewords < data.Length)
+                    throw new ArgumentException($"The defined code size '{codeSize}' is to small!", nameof(codeSize));
+            }
 
             data = AddPadding(data, size.DataCodewords);
             data = ErrorCorrection.CalculateEcc(data, size);

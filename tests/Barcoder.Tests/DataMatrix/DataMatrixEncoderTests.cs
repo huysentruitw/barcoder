@@ -68,6 +68,42 @@ namespace Barcoder.Tests.DataMatrix
             }
         }
 
+        [Fact]
+        public void Encode_ValidContent_ShouldEncodeDataMatrixCodeCorrectly_FixedSize()
+        {
+            // Arrange
+            var content = "1234567890";
+            var expectedDataBits = ImageStringToBools(@"
+                #.#.#.#.#.#.#.
+                ##..#..#...###
+                ##..##...###..
+                ##...##....#.#
+                ###.#......#..
+                #.......##...#
+                #...##.####...
+                #..........#.#
+                #.###..##.....
+                ###.##.#.#####
+                #.####...#..#.
+                #.###..#.##.##
+                #..##.######..
+                ##############
+            ");
+            // Act
+            var dataMatrix = DataMatrixEncoder.Encode(content, 14) as DataMatrixCode;
+            // Assert
+            dataMatrix.Should().NotBeNull();
+            dataMatrix.Bounds.X.Should().Be(14);
+            dataMatrix.Bounds.Y.Should().Be(14);
+
+            for (int i = 0; i < expectedDataBits.Length; i++)
+            {
+                int x = i % dataMatrix.Bounds.X;
+                int y = i / dataMatrix.Bounds.X;
+                dataMatrix.Get(x, y).Should().Be(expectedDataBits[i], $"of expected bit on index {i}");
+            }
+        }
+
         private static bool[] ImageStringToBools(string imageString)
         {
             var lines = imageString?
