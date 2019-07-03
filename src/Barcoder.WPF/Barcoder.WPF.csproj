@@ -33,9 +33,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Barcoder, Version=1.0.0.59, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Barcoder.1.0.0.59\lib\netstandard2.0\Barcoder.dll</HintPath>
-    </Reference>
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
     <Reference Include="System" />
@@ -59,7 +56,10 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <None Include="packages.config" />
+    <ProjectReference Include="..\Barcoder\Barcoder.csproj">
+      <Project>{21c87006-2fbf-4711-b0ac-9c1ef0d68f28}</Project>
+      <Name>Barcoder</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
