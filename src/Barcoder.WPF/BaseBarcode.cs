@@ -1,5 +1,6 @@
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media;
 using System.Windows.Shapes;
 
 namespace Barcoder.WPF
@@ -31,6 +32,7 @@ namespace Barcoder.WPF
             _canvas.Children.Add(rect);
             Canvas.SetLeft(rect, x);
             Canvas.SetTop(rect, y);
+            RenderOptions.SetEdgeMode(rect, EdgeMode.Aliased);
         }
 
         protected abstract IBarcode GetBarcode();
