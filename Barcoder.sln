@@ -20,7 +20,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Barcoder.Renderer.Svg.Tests
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Barcoder.Renderer.Image", "src\Barcoder.Renderer.Image\Barcoder.Renderer.Image.csproj", "{A3E591B1-35AD-485B-B951-F890F4AD1286}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Barcoder.Renderer.Image.Tests", "tests\Barcoder.Renderer.Image.Tests\Barcoder.Renderer.Image.Tests.csproj", "{75E3AE14-4059-4EAE-A738-03E2688E8080}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Barcoder.Renderer.Image.Tests", "tests\Barcoder.Renderer.Image.Tests\Barcoder.Renderer.Image.Tests.csproj", "{75E3AE14-4059-4EAE-A738-03E2688E8080}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Barcoder.WPF", "src\Barcoder.WPF\Barcoder.WPF.csproj", "{30DEFAC9-15AA-490B-B4B9-76446BD2CE2C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -52,6 +54,10 @@ Global
 		{75E3AE14-4059-4EAE-A738-03E2688E8080}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{75E3AE14-4059-4EAE-A738-03E2688E8080}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{75E3AE14-4059-4EAE-A738-03E2688E8080}.Release|Any CPU.Build.0 = Release|Any CPU
+		{30DEFAC9-15AA-490B-B4B9-76446BD2CE2C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{30DEFAC9-15AA-490B-B4B9-76446BD2CE2C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{30DEFAC9-15AA-490B-B4B9-76446BD2CE2C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{30DEFAC9-15AA-490B-B4B9-76446BD2CE2C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

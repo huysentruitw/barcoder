@@ -1,0 +1,18 @@
+﻿<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="clr-namespace:Barcoder.WPF">
+
+    <Style x:Key="Style_BaseBarcode" TargetType="{x:Type local:BaseBarcode}">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type local:BaseBarcode}">
+                    <Canvas x:Name="PART_Canvas" />
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+    <Style TargetType="{x:Type local:DataMatrix}" BasedOn="{StaticResource Style_BaseBarcode}" />
+
+    <Style TargetType="{x:Type local:Code128}" BasedOn="{StaticResource Style_BaseBarcode}" />
+</ResourceDictionary>
