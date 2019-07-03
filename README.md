@@ -66,6 +66,30 @@ using (var stream = new FileStream("output.png", FileMode.Create))
 }
 ```
 
+## Usage - WPF Control
+
+**Add resource to the file App.xaml:**
+```
+<ResourceDictionary Source="pack://application:,,,/Barcoder.WPF;component/Theme.xaml" />
+```
+
+**Example MainWindow:**
+```
+<Window x:Class="Barcode.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:c="clr-namespace:Barcoder.WPF;assembly=Barcoder.WPF"
+        mc:Ignorable="d" Title="MainWindow" Height="250" Width="500">
+    <StackPanel Orientation="Horizontal">
+        <c:Code128 Value="123599" ModuleWidth="1" Height="50" Foreground="Red" IncludeChecksum="True" />
+        <c:DataMatrix Value="1234599" ModuleSize="8" Foreground="Green" />
+    </StackPanel>
+</Window>
+```
+
+
 ## Contributions
 
 Feel free to dig into the linked GO project and help porting other barcode types.
