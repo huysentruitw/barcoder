@@ -6,7 +6,7 @@ namespace Barcoder.DataMatrix
 {
     public static class DataMatrixEncoder
     {
-        public static IBarcode Encode(string content, byte fixedNumberOfRows = 0)
+        public static IBarcode Encode(string content, int? fixedNumberOfRows = null)
         {
             var data = EncodeText(content);
 
