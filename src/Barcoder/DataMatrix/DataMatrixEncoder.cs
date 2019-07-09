@@ -27,7 +27,7 @@ namespace Barcoder.DataMatrix
             CodeSize codeSize = CodeSizes.All.FirstOrDefault(x => x.Rows == fixedNumberOfRows)
                 ?? throw new InvalidOperationException($"No code size found with fixed number of rows {fixedNumberOfRows}");
             if (codeSize.DataCodewords < dataLength)
-                throw new ArgumentException($"The fixed code size does not fit {dataLength} codewords");
+                throw new InvalidOperationException($"The fixed code size does not fit {dataLength} codewords");
             return codeSize;
         }
 
