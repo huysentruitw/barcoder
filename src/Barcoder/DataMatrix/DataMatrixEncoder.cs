@@ -6,23 +6,13 @@ namespace Barcoder.DataMatrix
 {
     public static class DataMatrixEncoder
     {
-        public static IBarcode Encode(string content, byte codeSize = 0)
+        public static IBarcode Encode(string content, byte fixedNumberOfRows = 0)
         {
             var data = EncodeText(content);
 
-            CodeSize size;
-            if (codeSize == 0)
-            {
-                size = CodeSizes.All.FirstOrDefault(x => x.DataCodewords >= data.Length)
-                   ?? throw new InvalidOperationException("Too much data to encode");
-            }
-            else
-            {
-                size = CodeSizes.All.FirstOrDefault(x => x.Rows == codeSize)
-                    ?? throw new ArgumentException($"CodeSize '{codeSize}' is not a valid size!", nameof(codeSize));
-                if (size.DataCodewords < data.Length)
-                    throw new ArgumentException($"The defined code size '{codeSize}' is to small!", nameof(codeSize));
-            }
+            CodeSize size = fixedNumberOfRows > 0
+                ? GetFixedCodeSizeForData(fixedNumberOfRows, data.Length)
+                : GetSmallestCodeSizeForData(data.Length);
 
             data = AddPadding(data, size.DataCodewords);
             data = ErrorCorrection.CalculateEcc(data, size);
@@ -30,6 +20,21 @@ namespace Barcoder.DataMatrix
                 ?? throw new InvalidOperationException("Unable to render barcode");
             code.Content = content;
             return code;
+        }
+
+        private static CodeSize GetFixedCodeSizeForData(int fixedNumberOfRows, int dataLength)
+        {
+            CodeSize codeSize = CodeSizes.All.FirstOrDefault(x => x.Rows == fixedNumberOfRows)
+                ?? throw new InvalidOperationException($"No code size found with fixed number of rows {fixedNumberOfRows}");
+            if (codeSize.DataCodewords < dataLength)
+                throw new ArgumentException($"The fixed code size does not fit {dataLength} codewords");
+            return codeSize;
+        }
+
+        private static CodeSize GetSmallestCodeSizeForData(int dataLength)
+        {
+            return CodeSizes.All.FirstOrDefault(x => x.DataCodewords >= dataLength)
+                ?? throw new InvalidOperationException($"No code size found that fits {dataLength} codewords");
         }
 
         private static DataMatrixCode Render(byte[] data, CodeSize size)
