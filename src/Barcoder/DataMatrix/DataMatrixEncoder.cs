@@ -11,7 +11,7 @@ namespace Barcoder.DataMatrix
             var data = EncodeText(content);
 
             CodeSize size = fixedNumberOfRows.HasValue
-                ? GetFixedCodeSizeForData(fixedNumberOfRows, data.Length)
+                ? GetFixedCodeSizeForData(fixedNumberOfRows.Value, data.Length)
                 : GetSmallestCodeSizeForData(data.Length);
 
             data = AddPadding(data, size.DataCodewords);
