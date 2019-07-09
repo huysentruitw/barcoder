@@ -21,7 +21,6 @@ namespace Barcoder.Tests.DataMatrix
             result.Should().BeEquivalentTo(new byte[] { 124, 35, 113, 112, 35, 59, 142, 45, 35, 99, 98, 117, 100, 105, 66, 100, 117, 106, 112, 111, 35, 59, 35, 116, 117, 98, 115, 117, 96, 102, 111, 101, 35, 126, 129, 181 });
         }
 
-
         [Fact]
         public void Encode_ValidContent_ShouldEncodeDataMatrixCodeCorrectly()
         {
@@ -60,6 +59,44 @@ namespace Barcoder.Tests.DataMatrix
             // Assert
             dataMatrix.Should().NotBeNull();
             expectedDataBits.Length.Should().Be(dataMatrix.Bounds.X * dataMatrix.Bounds.Y);
+            for (int i = 0; i < expectedDataBits.Length; i++)
+            {
+                int x = i % dataMatrix.Bounds.X;
+                int y = i / dataMatrix.Bounds.X;
+                dataMatrix.Get(x, y).Should().Be(expectedDataBits[i], $"of expected bit on index {i}");
+            }
+        }
+
+        [Fact]
+        public void Encode_ValidContent_ShouldEncodeDataMatrixCodeCorrectly_FixedSize()
+        {
+            // Arrange
+            var content = "1234567890";
+            var expectedDataBits = ImageStringToBools(@"
+                #.#.#.#.#.#.#.
+                ##..#..#...###
+                ##..##...###..
+                ##...##....#.#
+                ###.#......#..
+                #.......##...#
+                #...##.####...
+                #..........#.#
+                #.###..##.....
+                ###.##.#.#####
+                #.####...#..#.
+                #.###..#.##.##
+                #..##.######..
+                ##############
+            ");
+
+            // Act
+            var dataMatrix = DataMatrixEncoder.Encode(content, 14) as DataMatrixCode;
+
+            // Assert
+            dataMatrix.Should().NotBeNull();
+            dataMatrix.Bounds.X.Should().Be(14);
+            dataMatrix.Bounds.Y.Should().Be(14);
+
             for (int i = 0; i < expectedDataBits.Length; i++)
             {
                 int x = i % dataMatrix.Bounds.X;
