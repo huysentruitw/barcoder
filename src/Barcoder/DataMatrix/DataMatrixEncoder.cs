@@ -10,7 +10,7 @@ namespace Barcoder.DataMatrix
         {
             var data = EncodeText(content);
 
-            CodeSize size = fixedNumberOfRows > 0
+            CodeSize size = fixedNumberOfRows.HasValue
                 ? GetFixedCodeSizeForData(fixedNumberOfRows, data.Length)
                 : GetSmallestCodeSizeForData(data.Length);
 
