@@ -9,6 +9,19 @@ namespace Barcoder.Tests.DataMatrix
     public sealed class DataMatrixEncoderTests
     {
         [Fact]
+        public void TextEncodingWithPadding()
+        {
+            // Arrange
+            var content = "{\"po\":12,\"batchAction\":\"start_end\"}";
+
+            // Act
+            var result = DataMatrixEncoder.AddPadding(DataMatrixEncoder.EncodeText(content), 36);
+
+            // Assert
+            result.Should().BeEquivalentTo(new byte[] { 124, 35, 113, 112, 35, 59, 142, 45, 35, 99, 98, 117, 100, 105, 66, 100, 117, 106, 112, 111, 35, 59, 35, 116, 117, 98, 115, 117, 96, 102, 111, 101, 35, 126, 129, 181 });
+        }
+
+        [Fact]
         public void Encode_ValidContent_ShouldEncodeDataMatrixCodeCorrectly()
         {
             // Arrange
@@ -90,19 +103,6 @@ namespace Barcoder.Tests.DataMatrix
                 int y = i / dataMatrix.Bounds.X;
                 dataMatrix.Get(x, y).Should().Be(expectedDataBits[i], $"of expected bit on index {i}");
             }
-        }
-
-        [Fact]
-        public void TextEncodingWithPadding()
-        {
-            // Arrange
-            var content = "{\"po\":12,\"batchAction\":\"start_end\"}";
-
-            // Act
-            var result = DataMatrixEncoder.AddPadding(DataMatrixEncoder.EncodeText(content), 36);
-
-            // Assert
-            result.Should().BeEquivalentTo(new byte[] { 124, 35, 113, 112, 35, 59, 142, 45, 35, 99, 98, 117, 100, 105, 66, 100, 117, 106, 112, 111, 35, 59, 35, 116, 117, 98, 115, 117, 96, 102, 111, 101, 35, 126, 129, 181 });
         }
 
         private static bool[] ImageStringToBools(string imageString)
