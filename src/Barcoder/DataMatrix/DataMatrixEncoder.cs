@@ -97,7 +97,7 @@ namespace Barcoder.DataMatrix
                     encodedString.Append((char)Gs1Constants.SpecialCodewords.FNC1);
             }
 
-            return EncodeText(encodedString.ToString(), skipFnc1: true);
+            return EncodeText(encodedString.ToString().TrimEnd((char)Gs1Constants.SpecialCodewords.FNC1), skipFnc1: true);
         }
 
         internal static string RemoveSpaces(string content)
