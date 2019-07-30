@@ -58,7 +58,7 @@ namespace Barcoder.Tests.DataMatrix
 
             // Assert
             dataMatrix.Should().NotBeNull();
-            expectedDataBits.Length.Should().Be(dataMatrix.Bounds.X * dataMatrix.Bounds.Y);
+            (dataMatrix.Bounds.X * dataMatrix.Bounds.Y).Should().Be(expectedDataBits.Length);
             for (int i = 0; i < expectedDataBits.Length; i++)
             {
                 int x = i % dataMatrix.Bounds.X;
@@ -68,7 +68,7 @@ namespace Barcoder.Tests.DataMatrix
         }
 
         [Fact]
-        public void Encode_ValidContent_ShouldEncodeDataMatrixCodeCorrectly_FixedSize()
+        public void Encode_FixedNumberOfRows_ValidContent_ShouldEncodeDataMatrixCodeCorrectly()
         {
             // Arrange
             var content = "1234567890";
@@ -90,13 +90,52 @@ namespace Barcoder.Tests.DataMatrix
             ");
 
             // Act
-            var dataMatrix = DataMatrixEncoder.Encode(content, 14) as DataMatrixCode;
+            var dataMatrix = DataMatrixEncoder.Encode(content, fixedNumberOfRows: 14) as DataMatrixCode;
 
             // Assert
             dataMatrix.Should().NotBeNull();
             dataMatrix.Bounds.X.Should().Be(14);
             dataMatrix.Bounds.Y.Should().Be(14);
+            for (int i = 0; i < expectedDataBits.Length; i++)
+            {
+                int x = i % dataMatrix.Bounds.X;
+                int y = i / dataMatrix.Bounds.X;
+                dataMatrix.Get(x, y).Should().Be(expectedDataBits[i], $"of expected bit on index {i}");
+            }
+        }
 
+        [Fact]
+        public void Encode_Gs1ModeEnabled_ValidGs1Content_ShouldEncodeDataMatrixGs1Correctly()
+        {
+            // Arrange
+            var content = "(01) 0 0614141 99999 6 (90) 1234567890";
+            var expectedDataBits = ImageStringToBools(@"
+                #.#.#.#.#.#.#.#.#.
+                ##..#.####.....###
+                #...#.#######.#...
+                #.###.##..#....###
+                ###..###..#...##..
+                #.#.##.#.....##..#
+                ##.##..#..#.###.#.
+                #..####..##.....##
+                #.#.###.#..######.
+                ####....##.#..#..#
+                ##..####.#..####..
+                #.#.......###.####
+                #.##.#....##..##..
+                ###.#####.##..##.#
+                ##...#.#.###.#....
+                #..#...#..###..#.#
+                ##....#.....#.###.
+                ##################
+            ");
+
+            // Act
+            var dataMatrix = DataMatrixEncoder.Encode(content, gs1ModeEnabled: true) as DataMatrixCode;
+
+            // Assert
+            dataMatrix.Should().NotBeNull();
+            (dataMatrix.Bounds.X * dataMatrix.Bounds.Y).Should().Be(expectedDataBits.Length);
             for (int i = 0; i < expectedDataBits.Length; i++)
             {
                 int x = i % dataMatrix.Bounds.X;

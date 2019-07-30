@@ -1,14 +1,18 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
+using System.Text.RegularExpressions;
 
 namespace Barcoder.DataMatrix
 {
     public static class DataMatrixEncoder
     {
-        public static IBarcode Encode(string content, int? fixedNumberOfRows = null)
+        public static IBarcode Encode(string content, int? fixedNumberOfRows = null, bool gs1ModeEnabled = false)
         {
-            var data = EncodeText(content);
+            var data = gs1ModeEnabled
+                ? EncodeGs1(content)
+                : EncodeText(content);
 
             CodeSize size = fixedNumberOfRows.HasValue
                 ? GetFixedCodeSizeForData(fixedNumberOfRows.Value, data.Length)
@@ -44,7 +48,7 @@ namespace Barcoder.DataMatrix
             return codeLayout.Merge();
         }
 
-        internal static byte[] EncodeText(string content)
+        internal static byte[] EncodeText(string content, bool skipFnc1 = false)
         {
             var result = new List<byte>();
             for (int i = 0; i < content.Length;)
@@ -59,10 +63,13 @@ namespace Barcoder.DataMatrix
                     i++;
                     result.Add((byte)((c - '0') * 10 + (c2 - '0') + 130));
                 }
+                else if (c == Gs1Constants.SpecialCodewords.FNC1 && skipFnc1)
+                {
+                    result.Add((byte)c);
+                }
                 else if (c > 127)
                 {
-                    // Not correct... needs to be redone later...
-                    result.Add(235);
+                    result.Add(Gs1Constants.SpecialCodewords.UpperShiftToExtendedAscii);
                     result.Add((byte)(c - 127));
                 }
                 else
@@ -73,6 +80,28 @@ namespace Barcoder.DataMatrix
 
             return result.ToArray();
         }
+
+        internal static byte[] EncodeGs1(string content)
+        {
+            var encodedString = new StringBuilder();
+            encodedString.Append((char)Gs1Constants.SpecialCodewords.FNC1);
+
+            foreach (Match elementMatch in Regex.Matches(RemoveSpaces(content), @"\((?<ai>[0-9]+)\)(?<data>[0-9]+)"))
+            {
+                string applicationIdentifier = elementMatch.Groups["ai"].Value;
+                string data = elementMatch.Groups["data"].Value;
+                encodedString.Append(applicationIdentifier);
+                encodedString.Append(data);
+                if (Gs1Constants.PreDefinedApplicationIdentifierLengths.TryGetValue(applicationIdentifier, out int length)
+                    && length != applicationIdentifier.Length + data.Length)
+                    encodedString.Append((char)Gs1Constants.SpecialCodewords.FNC1);
+            }
+
+            return EncodeText(encodedString.ToString(), skipFnc1: true);
+        }
+
+        internal static string RemoveSpaces(string content)
+            => content.Replace(" ", string.Empty);
 
         internal static byte[] AddPadding(byte[] data, int toCount)
         {

@@ -14,6 +14,7 @@ Supported Barcode Types:
 * Code 93
 * Code 128
 * Data Matrix (ECC 200)
+* Data Matrix GS1
 * EAN 8
 * EAN 13
 * QR Code
