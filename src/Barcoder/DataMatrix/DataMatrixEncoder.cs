@@ -92,8 +92,8 @@ namespace Barcoder.DataMatrix
                 string data = elementMatch.Groups["data"].Value;
                 encodedString.Append(applicationIdentifier);
                 encodedString.Append(data);
-                if (Gs1Constants.PreDefinedApplicationIdentifierLengths.TryGetValue(applicationIdentifier, out int length)
-                    && length != applicationIdentifier.Length + data.Length)
+                if (!Gs1Constants.PreDefinedApplicationIdentifierLengths.TryGetValue(applicationIdentifier, out int length)
+                    || length != applicationIdentifier.Length + data.Length)
                     encodedString.Append((char)Gs1Constants.SpecialCodewords.FNC1);
             }
 
