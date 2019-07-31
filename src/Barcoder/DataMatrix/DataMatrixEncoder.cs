@@ -1,8 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Text.RegularExpressions;
+using Barcoder.Utils;
 
 namespace Barcoder.DataMatrix
 {
@@ -63,13 +62,13 @@ namespace Barcoder.DataMatrix
                     i++;
                     result.Add((byte)((c - '0') * 10 + (c2 - '0') + 130));
                 }
-                else if (c == Gs1Constants.SpecialCodewords.FNC1 && skipFnc1)
+                else if (c == DataMatrixSpecialCodewords.FNC1 && skipFnc1)
                 {
                     result.Add((byte)c);
                 }
                 else if (c > 127)
                 {
-                    result.Add(Gs1Constants.SpecialCodewords.UpperShiftToExtendedAscii);
+                    result.Add(DataMatrixSpecialCodewords.UpperShiftToExtendedAscii);
                     result.Add((byte)(c - 127));
                 }
                 else
@@ -82,26 +81,7 @@ namespace Barcoder.DataMatrix
         }
 
         internal static byte[] EncodeGs1(string content)
-        {
-            var encodedString = new StringBuilder();
-            encodedString.Append((char)Gs1Constants.SpecialCodewords.FNC1);
-
-            foreach (Match elementMatch in Regex.Matches(RemoveSpaces(content), @"\((?<ai>[0-9]+)\)(?<data>[0-9]+)"))
-            {
-                string applicationIdentifier = elementMatch.Groups["ai"].Value;
-                string data = elementMatch.Groups["data"].Value;
-                encodedString.Append(applicationIdentifier);
-                encodedString.Append(data);
-                if (!Gs1Constants.PreDefinedApplicationIdentifierLengths.TryGetValue(applicationIdentifier, out int length)
-                    || length != applicationIdentifier.Length + data.Length)
-                    encodedString.Append((char)Gs1Constants.SpecialCodewords.FNC1);
-            }
-
-            return EncodeText(encodedString.ToString().TrimEnd((char)Gs1Constants.SpecialCodewords.FNC1), skipFnc1: true);
-        }
-
-        internal static string RemoveSpaces(string content)
-            => content.Replace(" ", string.Empty);
+            => EncodeText(Gs1Encoder.Encode(content, (char)DataMatrixSpecialCodewords.FNC1), skipFnc1: true);
 
         internal static byte[] AddPadding(byte[] data, int toCount)
         {
