@@ -15,6 +15,7 @@ namespace Barcoder.Utils
         }
 
         public GaloisField GaloisField { get; }
+
         public GFPoly[] Polynomes => _polynomes.ToArray();
 
         public int[] Encode(int[] data, int eccCount)
