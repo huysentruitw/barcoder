@@ -9,6 +9,7 @@ Code ported from the GO project https://github.com/boombuler/barcode by [Florian
 Supported Barcode Types:
 
 * 2 of 5
+* Aztec Code
 * Codabar
 * Code 39
 * Code 93
@@ -21,7 +22,6 @@ Supported Barcode Types:
 
 To be ported:
 
-* Aztec Code
 * PDF 417
 
 ## NuGet package
