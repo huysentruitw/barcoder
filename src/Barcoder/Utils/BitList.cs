@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Barcoder.Utils
 {
@@ -144,6 +145,12 @@ namespace Barcoder.Utils
             var nd = new uint[dataLength + growBy];
             _data?.CopyTo(nd, 0);
             _data = nd;
+        }
+
+        public override string ToString()
+        {
+            BitList that = this;
+            return new string(Enumerable.Range(0, Length).Select(i => that.GetBit(i) ? 'X' : '.').ToArray());
         }
     }
 }
