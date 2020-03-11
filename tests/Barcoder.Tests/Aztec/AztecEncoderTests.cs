@@ -9,7 +9,7 @@ namespace Barcoder.Tests.Aztec
     public sealed class AztecEncoderTests
     {
         [Fact]
-        public void Encode_WikipediaSample_ShouldEncodeQrCodeCorrectly()
+        public void Encode_WikipediaSample_ShouldEncodeAztecCodeCorrectly()
         {
             // Arrange
             var content = "This is an example Aztec symbol for Wikipedia.";
@@ -54,7 +54,7 @@ namespace Barcoder.Tests.Aztec
         }
 
         [Fact]
-        public void Encode_ValidContent_ShouldEncodeQrCodeCorrectly()
+        public void Encode_ValidContent_ShouldEncodeAztecCodeCorrectly()
         {
             // Arrange
             var content = "Aztec Code is a public domain 2D matrix barcode symbology of nominally square symbols built on a square grid with a distinctive square bullseye pattern at their center.";
