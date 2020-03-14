@@ -15,7 +15,7 @@ namespace Barcoder.Aztec
             12, 12, 12, 12, 12, 12, 12, 12, 12, 12,
         };
 
-        public static IBarcode Encode(string content, int minimumEccPercentage = 33, int userSpecifiedLayers = 0)
+        public static IBarcode Encode(string content, int minimumEccPercentage = 23, int userSpecifiedLayers = 0)
         {
             BitList bits = HighLevelEncoding.Encode(content.Select(x => (byte)x).ToArray());
             int eccBits = ((bits.Length * minimumEccPercentage) / 100) + 11;
