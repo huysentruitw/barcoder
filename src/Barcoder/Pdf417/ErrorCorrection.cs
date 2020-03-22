@@ -97,7 +97,7 @@
         private static int GetErrorCorrectionWordCount(byte level)
             => 1 << (level + 1);
 
-        private static int[] Compute(byte level, int[] data)
+        public static int[] Compute(byte level, int[] data)
         {
             // Correction factors for the given level
             int[] factors = CorrectionFactors[level];
