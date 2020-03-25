@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using Barcoder.Utils;
 using TextEncoding = System.Text.Encoding;
 
@@ -9,7 +10,11 @@ namespace Barcoder.Qr.InternalEncoders
         public override (BitList, VersionInfo) Encode(string content, ErrorCorrectionLevel errorCorrectionLevel)
         {
             if (content == null) throw new ArgumentNullException(nameof(content));
-            byte[] data = TextEncoding.UTF8.GetBytes(content);
+
+            bool requiresPreamble = content.Any(x => x > 127);
+            byte[] data = requiresPreamble
+                ? System.Text.Encoding.UTF8.GetPreamble().Concat(System.Text.Encoding.UTF8.GetBytes(content)).ToArray()
+                : System.Text.Encoding.UTF8.GetBytes(content);
 
             EncodingMode encodingMode = EncodingMode.Byte;
             var versionInfo = VersionInfo.FindSmallestVersionInfo(errorCorrectionLevel, encodingMode, data.Length * 8);

@@ -53,16 +53,16 @@ namespace Barcoder.Tests.Qr
             ");
 
             // Act
-            var qr = QrEncoder.Encode(content, ErrorCorrectionLevel.H, Encoding.Unicode) as QrCode;
+            IBarcode qr = QrEncoder.Encode(content, ErrorCorrectionLevel.H, Encoding.Unicode);
 
             // Assert
             qr.Should().NotBeNull();
-            expectedDataBits.Length.Should().Be(qr.Dimension * qr.Dimension);
+            expectedDataBits.Length.Should().Be(qr.Bounds.X * qr.Bounds.Y);
             for (int i = 0; i < expectedDataBits.Length; i++)
             {
-                int x = i % qr.Dimension;
-                int y = i / qr.Dimension;
-                qr.Get(x, y).Should().Be(expectedDataBits[i], $"of expected bit on index {i}");
+                int x = i % qr.Bounds.X;
+                int y = i / qr.Bounds.X;
+                qr.At(x, y).Should().Be(expectedDataBits[i], $"of expected bit on index {i}");
             }
         }
 
