@@ -18,7 +18,7 @@ namespace Barcoder.Qr.InternalEncoders
 
             var bits = new BitList();
             bits.AddBits((uint)encodingMode, 4);
-            bits.AddBits((uint)content.Length, versionInfo.CharCountBits(encodingMode));
+            bits.AddBits((uint)data.Length, versionInfo.CharCountBits(encodingMode));
             foreach (var b in data)
                 bits.AddByte(b);
             AddPaddingAndTerminator(ref bits, versionInfo);
