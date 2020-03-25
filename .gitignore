@@ -236,3 +236,4 @@ _Pvt_Extensions
 .fake/
 .nuget/NuGet.exe
 **/test_results.xml
+.idea
