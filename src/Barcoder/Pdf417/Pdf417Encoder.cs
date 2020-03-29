@@ -41,7 +41,7 @@ namespace Barcoder.Pdf417
             {
                 int[] row = grid[rowNum];
                 int table = rowNum % 3;
-                var rowCodes = new List<int>(new[] { 0, 0, 0, 0 });
+                var rowCodes = new List<int>();
 
                 rowCodes.Add(CodeWord.StartWord);
                 rowCodes.Add(CodeWord.Get(table, GetLeftCodeWord(rowNum, rows, columns, securityLevel)));
