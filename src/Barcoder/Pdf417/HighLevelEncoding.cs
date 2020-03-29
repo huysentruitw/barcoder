@@ -19,7 +19,7 @@ namespace Barcoder.Pdf417
             Upper,
             Lower,
             Mixed,
-            Punct,
+            Punctuation,
         }
 
         private const int LatchToText = 900;
@@ -31,7 +31,7 @@ namespace Barcoder.Pdf417
         private const int MinNumericCount = 13;
 
         private static readonly IReadOnlyDictionary<char, int> MixedMap;
-        private static readonly IReadOnlyDictionary<char, int> PunctMap;
+        private static readonly IReadOnlyDictionary<char, int> PunctuationMap;
 
         static HighLevelEncoding()
         {
@@ -48,18 +48,18 @@ namespace Barcoder.Pdf417
             }
             MixedMap = mixedMap;
 
-            var punctMap = new Dictionary<char, int>();
-            int[] punctRaw = new[]
+            var punctuationMap = new Dictionary<char, int>();
+            int[] punctuationRaw = new[]
             {
                 59, 60, 62, 64, 91, 92, 93, 95, 96, 126, 33, 13, 9, 44, 58,
                 10, 45, 46, 36, 47, 34, 124, 42, 40, 41, 63, 123, 125, 39, 0,
             };
-            for (int i = 0; i < punctRaw.Length; i++)
+            for (int i = 0; i < punctuationRaw.Length; i++)
             {
-                char ch = (char)punctRaw[i];
-                if (ch > 0) punctMap[ch] = i;
+                char ch = (char)punctuationRaw[i];
+                if (ch > 0) punctuationMap[ch] = i;
             }
-            PunctMap = punctMap;
+            PunctuationMap = punctuationMap;
         }
 
         public static int[] Encode(string data)
@@ -192,7 +192,7 @@ namespace Barcoder.Pdf417
             bool IsAlphaUpper(char ch) => ch == ' ' || (ch >= 'A' && ch <= 'Z');
             bool IsAlphaLower(char ch) => ch == ' ' || (ch >= 'a' && ch <= 'z');
             bool IsMixed(char ch) => MixedMap.ContainsKey(ch);
-	        bool IsPunctuation(char ch) => PunctMap.ContainsKey(ch);
+	        bool IsPunctuation(char ch) => PunctuationMap.ContainsKey(ch);
 
             int idx = 0;
             int[] tmp = Array.Empty<int>();
@@ -226,7 +226,7 @@ namespace Barcoder.Pdf417
                         }
 
                         tmp = tmp.Append(29).ToArray(); // punctuation switch
-                        tmp = tmp.Append(PunctMap[ch]).ToArray();
+                        tmp = tmp.Append(PunctuationMap[ch]).ToArray();
                     }
                     break;
 
@@ -255,7 +255,7 @@ namespace Barcoder.Pdf417
                         }
 
                         tmp = tmp.Append(29).ToArray(); //punctuation switch
-                        tmp = tmp.Append(PunctMap[ch]).ToArray();
+                        tmp = tmp.Append(PunctuationMap[ch]).ToArray();
                     }
                     break;
 
@@ -285,21 +285,21 @@ namespace Barcoder.Pdf417
                             char next = text[idx + 1];
 						    if (IsPunctuation(next))
                             {
-                                subMode = SubMode.Punct;
+                                subMode = SubMode.Punctuation;
                                 tmp = tmp.Append(25).ToArray(); //punctuation latch
                                 continue;
                             }
 					    }
 
                         tmp = tmp.Append(29).ToArray(); //punctuation switch
-                        tmp = tmp.Append(PunctMap[ch]).ToArray();
+                        tmp = tmp.Append(PunctuationMap[ch]).ToArray();
                     }
                     break;
 
-                case SubMode.Punct:
+                case SubMode.Punctuation:
 			        if (IsPunctuation(ch))
                     {
-                        tmp = tmp.Append(PunctMap[ch]).ToArray();
+                        tmp = tmp.Append(PunctuationMap[ch]).ToArray();
                     }
                     else
                     {
