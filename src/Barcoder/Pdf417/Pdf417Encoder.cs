@@ -41,21 +41,21 @@ namespace Barcoder.Pdf417
             {
                 int[] row = grid[rowNum];
                 int table = rowNum % 3;
-                var rowCodes = new int[columns + 4];
+                var rowCodes = new List<int>(new[] { 0, 0, 0, 0 });
 
-                rowCodes = rowCodes.Append(CodeWord.StartWord).ToArray();
-                rowCodes = rowCodes.Append(CodeWord.Get(table, GetLeftCodeWord(rowNum, rows, columns, securityLevel))).ToArray();
+                rowCodes.Add(CodeWord.StartWord);
+                rowCodes.Add(CodeWord.Get(table, GetLeftCodeWord(rowNum, rows, columns, securityLevel)));
 
                 foreach (var word in row)
-                    rowCodes = rowCodes.Append(CodeWord.Get(table, word)).ToArray();
+                    rowCodes.Add(CodeWord.Get(table, word));
 
-                rowCodes = rowCodes.Append(CodeWord.Get(table, GetRightCodeWord(rowNum, rows, columns, securityLevel))).ToArray();
-                rowCodes = rowCodes.Append(CodeWord.StopWord).ToArray();
+                rowCodes.Add(CodeWord.Get(table, GetRightCodeWord(rowNum, rows, columns, securityLevel)));
+                rowCodes.Add(CodeWord.StopWord);
 
-                codes.Add(rowCodes);
+                codes.Add(rowCodes.ToArray());
             }
 
-            return new Pdf417Code(data, RenderBarcode(codes.ToArray()), (columns + 4) * 17 + 1);
+            return new Pdf417Code(data, RenderBarcode(codes), (columns + 4) * 17 + 1);
         }
 
         private static int[] EncodeData(int[] dataWords, int columns, byte securityLevel)
@@ -139,7 +139,7 @@ namespace Barcoder.Pdf417
             return padding;
         }
 
-        private static BitList RenderBarcode(int[][] codes)
+        private static BitList RenderBarcode(IEnumerable<int[]> codes)
         {
             var bl = new BitList();
             foreach (int[] row in codes)

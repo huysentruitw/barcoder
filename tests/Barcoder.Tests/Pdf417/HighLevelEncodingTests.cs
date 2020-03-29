@@ -1,4 +1,6 @@
-﻿using Barcoder.Pdf417;
+﻿using System.Collections.Generic;
+using System.Linq;
+using Barcoder.Pdf417;
 using FluentAssertions;
 using Xunit;
 
@@ -27,7 +29,7 @@ namespace Barcoder.Tests.Pdf417
         public void EncodeBinary_ShouldEncodeCorrectly(string msg, params int[] expected)
         {
             // Act
-            int[] result = HighLevelEncoding.EncodeBinary(msg, HighLevelEncoding.EncodingMode.Text);
+            IEnumerable<int> result = HighLevelEncoding.EncodeBinary(msg, HighLevelEncoding.EncodingMode.Text);
 
             // Assert
             result.Should().BeEquivalentTo(expected);

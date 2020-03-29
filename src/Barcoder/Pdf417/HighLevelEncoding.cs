@@ -67,18 +67,18 @@ namespace Barcoder.Pdf417
             EncodingMode encodingMode = EncodingMode.Text;
             SubMode textSubMode = SubMode.Upper;
 
-            int[] result = Array.Empty<int>();
+            var result = new List<int>();
 
             while (data.Length > 0)
             {
                 var numericCount = DetermineConsecutiveDigitCount(data);
                 if (numericCount >= MinNumericCount || numericCount == data.Length)
                 {
-                    result = result.Append(LatchToNumeric).ToArray();
+                    result.Add(LatchToNumeric);
                     encodingMode = EncodingMode.Numeric;
                     textSubMode = SubMode.Upper;
-                    int[] numData = EncodeNumeric(data.Substring(0, numericCount));
-                    result = result.Concat(numData).ToArray();
+                    IEnumerable<int> numData = EncodeNumeric(data.Substring(0, numericCount));
+                    result.AddRange(numData);
                     data = data.Substring(numericCount);
                 }
                 else
@@ -88,13 +88,13 @@ namespace Barcoder.Pdf417
                     {
                         if (encodingMode != EncodingMode.Text)
                         {
-                            result = result.Append(LatchToText).ToArray();
+                            result.Add(LatchToText);
                             encodingMode = EncodingMode.Text;
                             textSubMode = SubMode.Upper;
                         }
 
-                        int[] txtData = EncodeText(data.Substring(0, textCount), ref textSubMode);
-                        result = result.Concat(txtData).ToArray();
+                        IEnumerable<int> txtData = EncodeText(EncodeTextPreprocess(data.Substring(0, textCount), ref textSubMode));
+                        result.AddRange(txtData);
                         data = data.Substring(textCount);
                     }
                     else
@@ -109,14 +109,14 @@ namespace Barcoder.Pdf417
                             encodingMode = EncodingMode.Binary;
                             textSubMode = SubMode.Upper;
                         }
-                        int[] byteData = EncodeBinary(bytes, encodingMode);
-                        result = result.Concat(byteData).ToArray();
+                        IEnumerable<int> byteData = EncodeBinary(bytes, encodingMode);
+                        result.AddRange(byteData);
                         data = data.Substring(binaryCount);
                     }
                 }
             }
 
-            return result;
+            return result.ToArray();
         }
 
         private static int DetermineConsecutiveDigitCount(string data)
@@ -133,14 +133,14 @@ namespace Barcoder.Pdf417
             return cnt;
         }
 
-        private static int[] EncodeNumeric(string digits)
+        private static IEnumerable<int> EncodeNumeric(string digits)
         {
             int digitCount = digits.Length;
             int chunkCount = digitCount / 44;
             if (digitCount % 44 != 0)
                 chunkCount++;
 
-            int[] codewords = Array.Empty<int>();
+            var codeWords = new List<int>();
 
             for (int i = 0; i < chunkCount; i++)
             {
@@ -154,27 +154,26 @@ namespace Barcoder.Pdf417
                 if (!BigInteger.TryParse($"1{chunk}", out BigInteger chunkNum))
                     throw new InvalidOperationException($"Failed converting: {chunk}");
 
-                int[] cws = Array.Empty<int>();
+                var cws = new List<int>();
 
                 while (chunkNum > 0)
                 {
                     BigInteger cw = chunkNum % 900;
                     chunkNum = chunkNum / 900;
-                    cws = new[] { (int)cw }.Concat(cws).ToArray();
+                    cws.Insert(0, (int)cw);
                 }
 
-                codewords = codewords.Concat(cws).ToArray();
+                codeWords.AddRange(cws);
             }
 
-            return codewords;
+            return codeWords;
         }
 
         private static int DetermineConsecutiveTextCount(string msg)
         {
-            int result = 0;
-
             bool IsText(char ch) => ch == '\t' || ch == '\n' || ch == '\r' || (ch >= 32 && ch <= 126);
 
+            int result = 0;
             for (int i = 0; i < msg.Length; i++)
             {
                 int numericCount = DetermineConsecutiveDigitCount(msg.Substring(i));
@@ -187,7 +186,7 @@ namespace Barcoder.Pdf417
             return result;
         }
 
-        private static int[] EncodeText(string text, ref SubMode subMode)
+        private static IReadOnlyList<int> EncodeTextPreprocess(string text, ref SubMode subMode)
         {
             bool IsAlphaUpper(char ch) => ch == ' ' || (ch >= 'A' && ch <= 'Z');
             bool IsAlphaLower(char ch) => ch == ' ' || (ch >= 'a' && ch <= 'z');
@@ -195,7 +194,7 @@ namespace Barcoder.Pdf417
 	        bool IsPunctuation(char ch) => PunctuationMap.ContainsKey(ch);
 
             int idx = 0;
-            int[] tmp = Array.Empty<int>();
+            var result = new List<int>();
 	        while (idx < text.Length)
             {
                 char ch = text[idx];
@@ -205,28 +204,28 @@ namespace Barcoder.Pdf417
 			        if (IsAlphaUpper(ch))
                     {
                         if (ch == ' ')
-                            tmp = tmp.Append(26).ToArray(); //space
+                            result.Add(26); // space
                         else
-                            tmp = tmp.Append(ch - 'A').ToArray();
+                            result.Add(ch - 'A');
                     }
                     else
                     {
 				        if (IsAlphaLower(ch))
                         {
                             subMode = SubMode.Lower;
-                            tmp = tmp.Append(27).ToArray(); // lower latch
+                            result.Add(27); // lower latch
                             continue;
                         }
 
                         if (IsMixed(ch))
                         {
                             subMode = SubMode.Mixed;
-                            tmp = tmp.Append(28).ToArray(); // mixed latch
+                            result.Add(28); // mixed latch
                             continue;
                         }
 
-                        tmp = tmp.Append(29).ToArray(); // punctuation switch
-                        tmp = tmp.Append(PunctuationMap[ch]).ToArray();
+                        result.Add(29); // punctuation switch
+                        result.Add(PunctuationMap[ch]);
                     }
                     break;
 
@@ -234,49 +233,49 @@ namespace Barcoder.Pdf417
 			        if (IsAlphaLower(ch))
                     {
                         if (ch == ' ')
-                            tmp = tmp.Append(26).ToArray(); //space
+                            result.Add(26); // space
                         else
-                            tmp = tmp.Append(ch - 'a').ToArray();
+                            result.Add(ch - 'a');
                     }
                     else
                     {
 				        if (IsAlphaUpper(ch))
                         {
-                            tmp = tmp.Append(27).ToArray(); //upper switch
-                            tmp = tmp.Append(ch - 'A').ToArray();
+                            result.Add(27); // upper switch
+                            result.Add(ch - 'A');
                             break;
                         }
 
                         if (IsMixed(ch))
                         {
                             subMode = SubMode.Mixed;
-                            tmp = tmp.Append(28).ToArray(); //mixed latch
+                            result.Add(28); // mixed latch
                             continue;
                         }
 
-                        tmp = tmp.Append(29).ToArray(); //punctuation switch
-                        tmp = tmp.Append(PunctuationMap[ch]).ToArray();
+                        result.Add(29); // punctuation switch
+                        result.Add(PunctuationMap[ch]);
                     }
                     break;
 
 		        case SubMode.Mixed:
 			        if (IsMixed(ch))
                     {
-                        tmp = tmp.Append(MixedMap[ch]).ToArray();
+                        result.Add(MixedMap[ch]);
                     }
                     else
                     {
 				        if (IsAlphaUpper(ch))
                         {
                             subMode = SubMode.Upper;
-                            tmp = tmp.Append(28).ToArray(); //upper latch
+                            result.Add(28); // upper latch
                             continue;
                         }
 
                         if (IsAlphaLower(ch))
                         {
                             subMode = SubMode.Lower;
-                            tmp = tmp.Append(27).ToArray(); //lower latch
+                            result.Add(27); // lower latch
                             continue;
                         }
 
@@ -286,25 +285,25 @@ namespace Barcoder.Pdf417
 						    if (IsPunctuation(next))
                             {
                                 subMode = SubMode.Punctuation;
-                                tmp = tmp.Append(25).ToArray(); //punctuation latch
+                                result.Add(25); // punctuation latch
                                 continue;
                             }
 					    }
 
-                        tmp = tmp.Append(29).ToArray(); //punctuation switch
-                        tmp = tmp.Append(PunctuationMap[ch]).ToArray();
+                        result.Add(29); // punctuation switch
+                        result.Add(PunctuationMap[ch]);
                     }
                     break;
 
                 case SubMode.Punctuation:
 			        if (IsPunctuation(ch))
                     {
-                        tmp = tmp.Append(PunctuationMap[ch]).ToArray();
+                        result.Add(PunctuationMap[ch]);
                     }
                     else
                     {
                         subMode = SubMode.Upper;
-                        tmp = tmp.Append(29).ToArray(); //upper latch
+                        result.Add(29); // upper latch
                         continue;
                     }
                     break;
@@ -316,15 +315,19 @@ namespace Barcoder.Pdf417
                 idx++;
             }
 
+            return result;
+        }
+
+        private static IEnumerable<int> EncodeText(IReadOnlyList<int> preprocessData)
+        {
             int h = 0;
-            int[] result = Array.Empty<int>();
-            for (int i = 0; i < tmp.Length; i++)
+            for (int i = 0; i < preprocessData.Count; i++)
             {
-                int val = tmp[i];
+                int val = preprocessData[i];
 		        if (i % 2 != 0)
                 {
                     h = (h * 30) + val;
-                    result = result.Append(h).ToArray();
+                    yield return h;
                 }
                 else
                 {
@@ -332,10 +335,8 @@ namespace Barcoder.Pdf417
                 }
 	        }
 
-            if (tmp.Length % 2 != 0)
-                result = result.Append((h * 30) + 29).ToArray();
-
-            return result;
+            if (preprocessData.Count % 2 != 0)
+                yield return (h * 30) + 29;
         }
 
         private static int DetermineConsecutiveBinaryCount(string msg)
@@ -356,17 +357,17 @@ namespace Barcoder.Pdf417
             return result;
         }
 
-        internal static int[] EncodeBinary(string data, EncodingMode startMode)
+        internal static IEnumerable<int> EncodeBinary(string data, EncodingMode startMode)
         {
-            int[] result = Array.Empty<int>();
+            var result = new List<int>();
 
             int count = data.Length;
             if (count == 1 && startMode == EncodingMode.Text)
-                result = result.Append(ShiftToByte).ToArray();
+                result.Add(ShiftToByte);
             else if ((count % 6) == 0)
-                result = result.Append(LatchToByte).ToArray();
+                result.Add(LatchToByte);
             else
-                result = result.Append(LatchToBytePadded).ToArray();
+                result.Add(LatchToBytePadded);
 
             int idx = 0;
 
@@ -389,14 +390,14 @@ namespace Barcoder.Pdf417
                         t = t / 900;
                     }
 
-                    result = result.Concat(words).ToArray();
+                    result.AddRange(words);
                     idx += 6;
                 }
             }
 
             // Encode rest (remaining n < 5 bytes if any)
             for (int i = idx; i < count; i++)
-                result = result.Append(data[i] & 0xff).ToArray();
+                result.Add(data[i] & 0xFF);
 
             return result;
         }
