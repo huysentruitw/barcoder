@@ -1,12 +1,12 @@
 ﻿namespace Barcoder.Pdf417
 {
-    internal static class Codeword
+    internal static class CodeWord
     {
         public const int StartWord = 0x1fea8;
 
         public const int StopWord = 0x3fa29;
 
-        private static readonly int[][] Codewords = new[]
+        private static readonly int[][] CodeWords = new[]
         {
             new[]
             {
@@ -299,6 +299,6 @@
         };
 
         public static int Get(int tableId, int word)
-            => Codewords[tableId][word];
+            => CodeWords[tableId][word];
     }
 }

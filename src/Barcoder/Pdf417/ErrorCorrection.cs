@@ -94,7 +94,7 @@
             },
         };
 
-        private static int GetErrorCorrectionWordCount(byte level)
+        public static int GetErrorCorrectionWordCount(byte level)
             => 1 << (level + 1);
 
         public static int[] Compute(byte level, int[] data)

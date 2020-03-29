@@ -173,7 +173,7 @@ namespace Barcoder.Pdf417
         {
             int result = 0;
 
-            static bool IsText(char ch) => ch == '\t' || ch == '\n' || ch == '\r' || (ch >= 32 && ch <= 126);
+            bool IsText(char ch) => ch == '\t' || ch == '\n' || ch == '\r' || (ch >= 32 && ch <= 126);
 
             for (int i = 0; i < msg.Length; i++)
             {
@@ -189,10 +189,10 @@ namespace Barcoder.Pdf417
 
         private static int[] EncodeText(string text, ref SubMode subMode)
         {
-            static bool IsAlphaUpper(char ch) => ch == ' ' || (ch >= 'A' && ch <= 'Z');
-            static bool IsAlphaLower(char ch) => ch == ' ' || (ch >= 'a' && ch <= 'z');
-            static bool IsMixed(char ch) => MixedMap.ContainsKey(ch);
-	        static bool IsPunctuation(char ch) => PunctMap.ContainsKey(ch);
+            bool IsAlphaUpper(char ch) => ch == ' ' || (ch >= 'A' && ch <= 'Z');
+            bool IsAlphaLower(char ch) => ch == ' ' || (ch >= 'a' && ch <= 'z');
+            bool IsMixed(char ch) => MixedMap.ContainsKey(ch);
+	        bool IsPunctuation(char ch) => PunctMap.ContainsKey(ch);
 
             int idx = 0;
             int[] tmp = Array.Empty<int>();
