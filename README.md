@@ -52,14 +52,18 @@ using (var reader = new StreamReader(stream))
 }
 ```
 
-## Usage - render to PNG
+## Usage - render to PNG, JPEG, GIF or BMP
+
+Example for rendering to PNG:
 
 ```csharp
 var barcode = QrEncoder.Encode("Hello World!");
-var renderer = new ImageRenderer();
+var renderer = new ImageRenderer(imageFormat: ImageFormat.Png);
 
 using (var stream = new FileStream("output.png", FileMode.Create))
 {
     renderer.Render(barcode, stream);
 }
 ```
+
+Supported image formats can be found [here](/src/Barcoder.Renderer.Image/ImageFormat.cs)

@@ -5,6 +5,7 @@ using Barcoder.Qr;
 using Barcoder.Renderers;
 using FluentAssertions;
 using Moq;
+using SixLabors.ImageSharp.Formats;
 using Xunit;
 using ImageSharp = SixLabors.ImageSharp;
 
@@ -50,7 +51,7 @@ namespace Barcoder.Renderer.Image.Tests
             IBarcode barcode = Code128Encoder.Encode("Wikipedia");
 
             // Act
-            var data = RenderBarcodeToByteArray(renderer, barcode);
+            byte[] data = RenderBarcodeToByteArray(renderer, barcode);
 
             // Assert
             data.Should().NotBeNull();
@@ -64,19 +65,85 @@ namespace Barcoder.Renderer.Image.Tests
             IBarcode barcode = QrEncoder.Encode("Hello Unicode\nHave a nice day!", ErrorCorrectionLevel.L, Encoding.Unicode);
 
             // Act
-            var data = RenderBarcodeToByteArray(renderer, barcode);
+            byte[] data = RenderBarcodeToByteArray(renderer, barcode);
 
             // Assert
             data.Should().NotBeNull();
         }
 
+        [Fact]
+        public void Render_ImageFormatBmp_ShouldRenderBmp()
+        {
+            // Arrange
+            var renderer = new ImageRenderer(imageFormat: ImageFormat.Bmp);
+            IBarcode barcode = QrEncoder.Encode("Hello", ErrorCorrectionLevel.L, Encoding.Unicode);
+            using var stream = new MemoryStream();
+
+            // Act
+            renderer.Render(barcode, stream);
+
+            // Assert
+            stream.Position = 0;
+            using var image = ImageSharp.Image.Load(stream, out IImageFormat imageFormat);
+            imageFormat.Name.Should().Be("BMP");
+        }
+
+        [Fact]
+        public void Render_ImageFormatGif_ShouldRenderGif()
+        {
+            // Arrange
+            var renderer = new ImageRenderer(imageFormat: ImageFormat.Gif);
+            IBarcode barcode = QrEncoder.Encode("Hello", ErrorCorrectionLevel.L, Encoding.Unicode);
+            using var stream = new MemoryStream();
+
+            // Act
+            renderer.Render(barcode, stream);
+
+            // Assert
+            stream.Position = 0;
+            using var image = ImageSharp.Image.Load(stream, out IImageFormat imageFormat);
+            imageFormat.Name.Should().Be("GIF");
+        }
+
+        [Fact]
+        public void Render_ImageFormatJpeg_ShouldRenderJpeg()
+        {
+            // Arrange
+            var renderer = new ImageRenderer(imageFormat: ImageFormat.Jpeg);
+            IBarcode barcode = QrEncoder.Encode("Hello", ErrorCorrectionLevel.L, Encoding.Unicode);
+            using var stream = new MemoryStream();
+
+            // Act
+            renderer.Render(barcode, stream);
+
+            // Assert
+            stream.Position = 0;
+            using var image = ImageSharp.Image.Load(stream, out IImageFormat imageFormat);
+            imageFormat.Name.Should().Be("JPEG");
+        }
+
+        [Fact]
+        public void Render_ImageFormatPng_ShouldRenderPng()
+        {
+            // Arrange
+            var renderer = new ImageRenderer(imageFormat: ImageFormat.Png);
+            IBarcode barcode = QrEncoder.Encode("Hello", ErrorCorrectionLevel.L, Encoding.Unicode);
+            using var stream = new MemoryStream();
+
+            // Act
+            renderer.Render(barcode, stream);
+
+            // Assert
+            stream.Position = 0;
+            using var image = ImageSharp.Image.Load(stream, out IImageFormat imageFormat);
+            imageFormat.Name.Should().Be("PNG");
+        }
+
         private static byte[] RenderBarcodeToByteArray(IRenderer renderer, IBarcode barcode)
         {
-            using (var stream = new MemoryStream())
-            {
-                renderer.Render(barcode, stream);
-                return stream.ToArray();
-            }
+            using var stream = new MemoryStream();
+            renderer.Render(barcode, stream);
+            return stream.ToArray();
         }
     }
 }

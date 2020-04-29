@@ -2,6 +2,10 @@ using System;
 using System.IO;
 using System.Numerics;
 using Barcoder.Renderers;
+using SixLabors.ImageSharp.Formats;
+using SixLabors.ImageSharp.Formats.Bmp;
+using SixLabors.ImageSharp.Formats.Gif;
+using SixLabors.ImageSharp.Formats.Jpeg;
 using SixLabors.ImageSharp.Formats.Png;
 using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp.Processing;
@@ -11,16 +15,35 @@ namespace Barcoder.Renderer.Image
 {
     public sealed class ImageRenderer : IRenderer
     {
-        private readonly PngEncoder _pngEncoder = new PngEncoder();
+        private readonly IImageEncoder _imageEncoder;
         private readonly int _pixelSize;
         private readonly int _barHeightFor1DBarcode;
 
-        public ImageRenderer(int pixelSize = 10, int barHeightFor1DBarcode = 40)
+        public ImageRenderer(
+            int pixelSize = 10,
+            int barHeightFor1DBarcode = 40,
+            ImageFormat imageFormat = ImageFormat.Png,
+            int jpegQuality = 75)
         {
             if (pixelSize <= 0) throw new ArgumentOutOfRangeException(nameof(pixelSize), "Value must be larger than zero");
             if (barHeightFor1DBarcode <= 0) throw new ArgumentOutOfRangeException(nameof(barHeightFor1DBarcode), "Value must be larger than zero");
+            if (jpegQuality < 0 || jpegQuality > 100) throw new ArgumentOutOfRangeException(nameof(jpegQuality), "Value must be a value between 0 and 100");
             _pixelSize = pixelSize;
             _barHeightFor1DBarcode = barHeightFor1DBarcode;
+            _imageEncoder = GetImageEncoder(imageFormat, jpegQuality);
+        }
+
+        private static IImageEncoder GetImageEncoder(ImageFormat imageFormat, int jpegQuality)
+        {
+            switch (imageFormat)
+            {
+            case ImageFormat.Bmp: return new BmpEncoder();
+            case ImageFormat.Gif: return new GifEncoder();
+            case ImageFormat.Jpeg: return new JpegEncoder { Quality = jpegQuality };
+            case ImageFormat.Png: return new PngEncoder();
+            default:
+                throw new NotSupportedException($"Requested image format {imageFormat} is not supported");
+            }
         }
 
         public void Render(IBarcode barcode, Stream outputStream)
@@ -58,7 +81,7 @@ namespace Barcoder.Renderer.Image
                     }
                 });
 
-                image.Save(outputStream, _pngEncoder);
+                image.Save(outputStream, _imageEncoder);
             }
         }
 
@@ -88,7 +111,7 @@ namespace Barcoder.Renderer.Image
                     }
                 });
 
-                image.Save(outputStream, _pngEncoder);
+                image.Save(outputStream, _imageEncoder);
             }
         }
     }
