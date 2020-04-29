@@ -128,7 +128,7 @@ namespace Barcoder.Tests.Aztec
                 throw new InvalidOperationException($"No data in {nameof(imageString)}");
             var dimension = lines.First().Length;
             if (lines.Length != dimension)
-                throw new InvalidOperationException("Not a square QR code");
+                throw new InvalidOperationException("Not a square Aztec code");
             foreach (var line in lines)
                 if (line.Length != dimension)
                     throw new InvalidOperationException("Not all lines have the same length");
