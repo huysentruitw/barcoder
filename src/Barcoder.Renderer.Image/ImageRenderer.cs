@@ -2,6 +2,7 @@ using System;
 using System.IO;
 using System.Linq;
 using System.Numerics;
+using System.Reflection;
 using Barcoder.Renderers;
 using SixLabors.Fonts;
 using SixLabors.ImageSharp.Formats;
@@ -28,9 +29,12 @@ namespace Barcoder.Renderer.Image
             ImageFormat imageFormat = ImageFormat.Png,
             int jpegQuality = 75)
         {
-            if (pixelSize <= 0) throw new ArgumentOutOfRangeException(nameof(pixelSize), "Value must be larger than zero");
-            if (barHeightFor1DBarcode <= 0) throw new ArgumentOutOfRangeException(nameof(barHeightFor1DBarcode), "Value must be larger than zero");
-            if (jpegQuality < 0 || jpegQuality > 100) throw new ArgumentOutOfRangeException(nameof(jpegQuality), "Value must be a value between 0 and 100");
+            if (pixelSize <= 0)
+                throw new ArgumentOutOfRangeException(nameof(pixelSize), "Value must be larger than zero");
+            if (barHeightFor1DBarcode <= 0)
+                throw new ArgumentOutOfRangeException(nameof(barHeightFor1DBarcode), "Value must be larger than zero");
+            if (jpegQuality < 0 || jpegQuality > 100)
+                throw new ArgumentOutOfRangeException(nameof(jpegQuality), "Value must be a value between 0 and 100");
             _pixelSize = pixelSize;
             _barHeightFor1DBarcode = barHeightFor1DBarcode;
             _imageEncoder = GetImageEncoder(imageFormat, jpegQuality);
@@ -40,10 +44,14 @@ namespace Barcoder.Renderer.Image
         {
             switch (imageFormat)
             {
-            case ImageFormat.Bmp: return new BmpEncoder();
-            case ImageFormat.Gif: return new GifEncoder();
-            case ImageFormat.Jpeg: return new JpegEncoder { Quality = jpegQuality };
-            case ImageFormat.Png: return new PngEncoder();
+            case ImageFormat.Bmp:
+                return new BmpEncoder();
+            case ImageFormat.Gif:
+                return new GifEncoder();
+            case ImageFormat.Jpeg:
+                return new JpegEncoder { Quality = jpegQuality };
+            case ImageFormat.Png:
+                return new PngEncoder();
             default:
                 throw new NotSupportedException($"Requested image format {imageFormat} is not supported");
             }
@@ -62,7 +70,7 @@ namespace Barcoder.Renderer.Image
                 else
                 {
                     Render1D(barcode, outputStream);
-                }                
+                }
             }
             else if (barcode.Bounds.Y > 1)
                 Render2D(barcode, outputStream);
@@ -83,7 +91,8 @@ namespace Barcoder.Renderer.Image
                     ctx.Fill(new Gray8(255));
                     for (var x = 0; x < barcode.Bounds.X; x++)
                     {
-                        if (!barcode.At(x, 0)) continue;
+                        if (!barcode.At(x, 0))
+                            continue;
                         ctx.FillPolygon(
                             black,
                             new Vector2((barcode.Margin + x) * _pixelSize, barcode.Margin * _pixelSize),
@@ -136,20 +145,22 @@ namespace Barcoder.Renderer.Image
                             new Vector2((barcode.Margin + x + 1) * _pixelSize, (eanHeightFor1DBarcode + barcode.Margin) * _pixelSize),
                             new Vector2((barcode.Margin + x) * _pixelSize, (eanHeightFor1DBarcode + barcode.Margin) * _pixelSize));
                         }
-                        
+
                     }
-                    
+
                     FontCollection collection = new FontCollection();
-                    FontFamily family = collection.Install(@"C:\Temp\arial.ttf");
+                    var assembly = Assembly.GetExecutingAssembly();
+                    var stream = assembly.GetManifestResourceStream(GetType(), "arial.ttf");
+                    FontFamily family = collection.Install(stream);
                     float fontSize = 8;
                     Font font = family.CreateFont(fontSize * _pixelSize, FontStyle.Italic);
-                    float y = (eanHeightFor1DBarcode + (contentMargin/4))* _pixelSize;
-                    string text1 = barcode.Content.Substring(0,1);
+                    float y = (eanHeightFor1DBarcode + (contentMargin / 4)) * _pixelSize;
+                    string text1 = barcode.Content.Substring(0, 1);
                     string text2 = barcode.Content.Substring(1, 6);
                     string text3 = barcode.Content.Substring(7);
-                    image.Mutate(x => x.DrawText(text1, font, black, new PointF(5*_pixelSize, y)));
-                    image.Mutate(x => x.DrawText(text2, font, black, new PointF(22*_pixelSize, y)));
-                    image.Mutate(x => x.DrawText(text3, font, black, new PointF(67*_pixelSize, y)));
+                    image.Mutate(x => x.DrawText(text1, font, black, new PointF(5 * _pixelSize, y)));
+                    image.Mutate(x => x.DrawText(text2, font, black, new PointF(22 * _pixelSize, y)));
+                    image.Mutate(x => x.DrawText(text3, font, black, new PointF(67 * _pixelSize, y)));
 
                 });
                 image.Save(outputStream, _imageEncoder);
@@ -171,7 +182,8 @@ namespace Barcoder.Renderer.Image
                     {
                         for (var x = 0; x < barcode.Bounds.X; x++)
                         {
-                            if (!barcode.At(x, y)) continue;
+                            if (!barcode.At(x, y))
+                                continue;
                             ctx.FillPolygon(
                                 black,
                                 new Vector2((barcode.Margin + x) * _pixelSize, (barcode.Margin + y) * _pixelSize),
