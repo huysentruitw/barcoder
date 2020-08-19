@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.Linq;
 using System.Numerics;
 using Barcoder.Renderers;
 using SixLabors.ImageSharp.Formats;
@@ -51,7 +52,16 @@ namespace Barcoder.Renderer.Image
             barcode = barcode ?? throw new ArgumentNullException(nameof(barcode));
             outputStream = outputStream ?? throw new ArgumentNullException(nameof(outputStream));
             if (barcode.Bounds.Y == 1)
-                Render1D(barcode, outputStream);
+            {
+                if (barcode.Metadata.CodeKind == BarcodeType.EAN13)
+                {
+                    Render1DEan13(barcode, outputStream);
+                }
+                else
+                {
+                    Render1D(barcode, outputStream);
+                }                
+            }
             else if (barcode.Bounds.Y > 1)
                 Render2D(barcode, outputStream);
             else
@@ -81,6 +91,51 @@ namespace Barcoder.Renderer.Image
                     }
                 });
 
+                image.Save(outputStream, _imageEncoder);
+            }
+        }
+
+        private void Render1DEan13(IBarcode barcode, Stream outputStream)
+        {
+            int eanHeightFor1DBarcode = _barHeightFor1DBarcode + 10;
+            int width = (barcode.Bounds.X + 2 * barcode.Margin) * _pixelSize;
+            int height = (eanHeightFor1DBarcode + 2 * barcode.Margin) * _pixelSize;
+
+            using (var image = new ImageSharp.Image<Gray8>(width, height))
+            {
+                //Available bars
+                //4, 5, 6, 8, 9, 13, 16, 18, 19, 22, 23, 26, 29, 30, 32, 37, 39, 43, 44, 46, 48, 50, 53, 54, 55, 57, 59, 64, 68, 71, 74, 78, 79, 80, 82, 85, 89, 92, 94
+                var longerBars = new int[] { 0, 2, 46, 48, 92, 94 };
+                image.Mutate(ctx =>
+                {
+                    var black = new Gray8(0);
+                    ctx.Fill(new Gray8(255));
+                    for (var x = 0; x < barcode.Bounds.X; x++)
+                    {
+                        if (!barcode.At(x, 0))
+                            continue;
+
+                        if (!longerBars.Contains(x))
+                        {
+                            ctx.FillPolygon(
+                            black,
+                            new Vector2((barcode.Margin + x) * _pixelSize, barcode.Margin * _pixelSize),
+                            new Vector2((barcode.Margin + x + 1) * _pixelSize, barcode.Margin * _pixelSize),
+                            new Vector2((barcode.Margin + x + 1) * _pixelSize, (eanHeightFor1DBarcode - 10 + barcode.Margin) * _pixelSize),
+                            new Vector2((barcode.Margin + x) * _pixelSize, (eanHeightFor1DBarcode - 10 + barcode.Margin) * _pixelSize));
+                        }
+                        else
+                        {
+                            ctx.FillPolygon(
+                            black,
+                            new Vector2((barcode.Margin + x) * _pixelSize, barcode.Margin * _pixelSize),
+                            new Vector2((barcode.Margin + x + 1) * _pixelSize, barcode.Margin * _pixelSize),
+                            new Vector2((barcode.Margin + x + 1) * _pixelSize, (eanHeightFor1DBarcode + barcode.Margin) * _pixelSize),
+                            new Vector2((barcode.Margin + x) * _pixelSize, (eanHeightFor1DBarcode + barcode.Margin) * _pixelSize));
+                        }
+                        
+                    }
+                });
                 image.Save(outputStream, _imageEncoder);
             }
         }
