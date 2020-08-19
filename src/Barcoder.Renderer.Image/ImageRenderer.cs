@@ -3,6 +3,7 @@ using System.IO;
 using System.Linq;
 using System.Numerics;
 using Barcoder.Renderers;
+using SixLabors.Fonts;
 using SixLabors.ImageSharp.Formats;
 using SixLabors.ImageSharp.Formats.Bmp;
 using SixLabors.ImageSharp.Formats.Gif;
@@ -10,6 +11,7 @@ using SixLabors.ImageSharp.Formats.Jpeg;
 using SixLabors.ImageSharp.Formats.Png;
 using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp.Processing;
+using SixLabors.Primitives;
 using ImageSharp = SixLabors.ImageSharp;
 
 namespace Barcoder.Renderer.Image
@@ -97,7 +99,8 @@ namespace Barcoder.Renderer.Image
 
         private void Render1DEan13(IBarcode barcode, Stream outputStream)
         {
-            int eanHeightFor1DBarcode = _barHeightFor1DBarcode + 10;
+            int contentMargin = 10;
+            int eanHeightFor1DBarcode = _barHeightFor1DBarcode + contentMargin;
             int width = (barcode.Bounds.X + 2 * barcode.Margin) * _pixelSize;
             int height = (eanHeightFor1DBarcode + 2 * barcode.Margin) * _pixelSize;
 
@@ -135,6 +138,19 @@ namespace Barcoder.Renderer.Image
                         }
                         
                     }
+                    
+                    FontCollection collection = new FontCollection();
+                    FontFamily family = collection.Install(@"C:\Temp\arial.ttf");
+                    float fontSize = 8;
+                    Font font = family.CreateFont(fontSize * _pixelSize, FontStyle.Italic);
+                    float y = (eanHeightFor1DBarcode + (contentMargin/4))* _pixelSize;
+                    string text1 = barcode.Content.Substring(0,1);
+                    string text2 = barcode.Content.Substring(1, 6);
+                    string text3 = barcode.Content.Substring(7);
+                    image.Mutate(x => x.DrawText(text1, font, black, new PointF(5*_pixelSize, y)));
+                    image.Mutate(x => x.DrawText(text2, font, black, new PointF(22*_pixelSize, y)));
+                    image.Mutate(x => x.DrawText(text3, font, black, new PointF(67*_pixelSize, y)));
+
                 });
                 image.Save(outputStream, _imageEncoder);
             }
