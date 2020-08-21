@@ -64,13 +64,9 @@ namespace Barcoder.Renderer.Image
             outputStream = outputStream ?? throw new ArgumentNullException(nameof(outputStream));
             if (barcode.Bounds.Y == 1)
             {
-                if (barcode.Metadata.CodeKind == BarcodeType.EAN8C)
+                if (barcode.Metadata.CodeKind == BarcodeType.EAN8C || barcode.Metadata.CodeKind == BarcodeType.EAN13C)
                 {
-                    Render1DEan8C(barcode, outputStream);
-                }
-                else if (barcode.Metadata.CodeKind == BarcodeType.EAN13C)
-                {
-                    Render1DEan13C(barcode, outputStream);
+                    Render1DWithContent(barcode, outputStream);
                 }
                 else
                 {
@@ -111,18 +107,17 @@ namespace Barcoder.Renderer.Image
             }
         }
 
-        private void Render1DEan8C(IBarcode barcode, Stream outputStream)
+        private void Render1DWithContent(IBarcode barcode, Stream outputStream)
         {
             int contentMargin = 10;
-            int eanHeightFor1DBarcode = _barHeightFor1DBarcode + contentMargin;
             int width = (barcode.Bounds.X + 2 * barcode.Margin) * _pixelSize;
-            int height = (eanHeightFor1DBarcode + 2 * barcode.Margin) * _pixelSize;
+            int height = (_barHeightFor1DBarcode + 2 * barcode.Margin) * _pixelSize;
+
+            var longerBarsEan8 = new int[] { 0, 2, 32, 34, 64, 66 };
+            var longerBarsEan13 = new int[] { 0, 2, 46, 48, 92, 94 };
 
             using (var image = new ImageSharp.Image<Gray8>(width, height))
-            {
-                //0, 2, 5, 6, 9, 12, 15, 16, 18, 19, 20, 21, 23, 25, 29, 30, 32, 34, 36, 39, 40, 41, 43, 45, 50, 54, 57, 58, 59, 62, 64, 66
-                var longerBars = new int[] { 0, 2, 32, 34, 64, 66 };
-                
+            {   
                 image.Mutate(ctx =>
                 {
                 var black = new Gray8(0);
@@ -134,14 +129,14 @@ namespace Barcoder.Renderer.Image
                             continue;
 
                 
-                        if (!longerBars.Contains(x))
+                        if ((barcode.Metadata.CodeKind == BarcodeType.EAN8C && longerBarsEan8.Contains(x)) || (barcode.Metadata.CodeKind == BarcodeType.EAN13C && longerBarsEan13.Contains(x)))
                         {
                             ctx.FillPolygon(
                             black,
                             new Vector2((barcode.Margin + x) * _pixelSize, barcode.Margin * _pixelSize),
                             new Vector2((barcode.Margin + x + 1) * _pixelSize, barcode.Margin * _pixelSize),
-                            new Vector2((barcode.Margin + x + 1) * _pixelSize, (eanHeightFor1DBarcode - 10 + barcode.Margin) * _pixelSize),
-                            new Vector2((barcode.Margin + x) * _pixelSize, (eanHeightFor1DBarcode - 10 + barcode.Margin) * _pixelSize));
+                            new Vector2((barcode.Margin + x + 1) * _pixelSize, (_barHeightFor1DBarcode + barcode.Margin) * _pixelSize),
+                            new Vector2((barcode.Margin + x) * _pixelSize, (_barHeightFor1DBarcode + barcode.Margin) * _pixelSize));
                         }
                         else
                         {
@@ -149,78 +144,37 @@ namespace Barcoder.Renderer.Image
                             black,
                             new Vector2((barcode.Margin + x) * _pixelSize, barcode.Margin * _pixelSize),
                             new Vector2((barcode.Margin + x + 1) * _pixelSize, barcode.Margin * _pixelSize),
-                            new Vector2((barcode.Margin + x + 1) * _pixelSize, (eanHeightFor1DBarcode + barcode.Margin) * _pixelSize),
-                            new Vector2((barcode.Margin + x) * _pixelSize, (eanHeightFor1DBarcode + barcode.Margin) * _pixelSize));
+                            new Vector2((barcode.Margin + x + 1) * _pixelSize, (_barHeightFor1DBarcode - contentMargin + barcode.Margin) * _pixelSize),
+                            new Vector2((barcode.Margin + x) * _pixelSize, (_barHeightFor1DBarcode - contentMargin + barcode.Margin) * _pixelSize));
                         }
 
                     }
 
                     Font font = GetFont();
-                    float y = (eanHeightFor1DBarcode + (contentMargin / 4)) * _pixelSize;
-                    string text1 = barcode.Content.Substring(0, 4);
-                    string text2 = barcode.Content.Substring(4);
-                    image.Mutate(x => x.DrawText(text1, font, black, new PointF(17 * _pixelSize, y)));
-                    image.Mutate(x => x.DrawText(text2, font, black, new PointF(49 * _pixelSize, y)));
-
+                    float y = (_barHeightFor1DBarcode + (contentMargin / 4)) * _pixelSize;
+                    if (barcode.Metadata.CodeKind == BarcodeType.EAN8C)
+                    {
+                        string text1 = barcode.Content.Substring(0, 4);
+                        string text2 = barcode.Content.Substring(4);
+                        image.Mutate(x => x.DrawText(text1, font, black, new PointF(17 * _pixelSize, y)));
+                        image.Mutate(x => x.DrawText(text2, font, black, new PointF(49 * _pixelSize, y)));
+                    }
+                    else if (barcode.Metadata.CodeKind == BarcodeType.EAN13C)
+                    {
+                        string text1 = barcode.Content.Substring(0, 1);
+                        string text2 = barcode.Content.Substring(1, 6);
+                        string text3 = barcode.Content.Substring(7);
+                        image.Mutate(x => x.DrawText(text1, font, black, new PointF(4 * _pixelSize, y)));
+                        image.Mutate(x => x.DrawText(text2, font, black, new PointF(20 * _pixelSize, y)));
+                        image.Mutate(x => x.DrawText(text3, font, black, new PointF(65 * _pixelSize, y)));
+                    }
                 });
                 
                 image.Save(outputStream, _imageEncoder);
             }
         }
 
-        private void Render1DEan13C(IBarcode barcode, Stream outputStream)
-        {
-            int contentMargin = 10;
-            int eanHeightFor1DBarcode = _barHeightFor1DBarcode + contentMargin;
-            int width = (barcode.Bounds.X + 2 * barcode.Margin) * _pixelSize;
-            int height = (eanHeightFor1DBarcode + 2 * barcode.Margin) * _pixelSize;
-
-            using (var image = new ImageSharp.Image<Gray8>(width, height))
-            {
-                var longerBars = new int[] { 0, 2, 46, 48, 92, 94 };
-                image.Mutate(ctx =>
-                {
-                    var black = new Gray8(0);
-                    ctx.Fill(new Gray8(255));
-                    for (var x = 0; x < barcode.Bounds.X; x++)
-                    {
-                        if (!barcode.At(x, 0))
-                            continue;
-
-                        if (!longerBars.Contains(x))
-                        {
-                            ctx.FillPolygon(
-                            black,
-                            new Vector2((barcode.Margin + x) * _pixelSize, barcode.Margin * _pixelSize),
-                            new Vector2((barcode.Margin + x + 1) * _pixelSize, barcode.Margin * _pixelSize),
-                            new Vector2((barcode.Margin + x + 1) * _pixelSize, (eanHeightFor1DBarcode - 10 + barcode.Margin) * _pixelSize),
-                            new Vector2((barcode.Margin + x) * _pixelSize, (eanHeightFor1DBarcode - 10 + barcode.Margin) * _pixelSize));
-                        }
-                        else
-                        {
-                            ctx.FillPolygon(
-                            black,
-                            new Vector2((barcode.Margin + x) * _pixelSize, barcode.Margin * _pixelSize),
-                            new Vector2((barcode.Margin + x + 1) * _pixelSize, barcode.Margin * _pixelSize),
-                            new Vector2((barcode.Margin + x + 1) * _pixelSize, (eanHeightFor1DBarcode + barcode.Margin) * _pixelSize),
-                            new Vector2((barcode.Margin + x) * _pixelSize, (eanHeightFor1DBarcode + barcode.Margin) * _pixelSize));
-                        }
-
-                    }
-
-                    Font font = GetFont();
-                    float y = (eanHeightFor1DBarcode + (contentMargin / 4)) * _pixelSize;
-                    string text1 = barcode.Content.Substring(0, 1);
-                    string text2 = barcode.Content.Substring(1, 6);
-                    string text3 = barcode.Content.Substring(7);
-                    image.Mutate(x => x.DrawText(text1, font, black, new PointF(4 * _pixelSize, y)));
-                    image.Mutate(x => x.DrawText(text2, font, black, new PointF(20 * _pixelSize, y)));
-                    image.Mutate(x => x.DrawText(text3, font, black, new PointF(65 * _pixelSize, y)));
-
-                });
-                image.Save(outputStream, _imageEncoder);
-            }
-        }
+        
 
         private void Render2D(IBarcode barcode, Stream outputStream)
         {
