@@ -9,17 +9,24 @@ namespace Barcoder.Renderer.Svg
 {
     public sealed class SvgRenderer : IRenderer
     {
+        private readonly bool _includeEanContentAsText;
+
+        public SvgRenderer(bool includeEanContentAsText = false)
+        {
+            _includeEanContentAsText = includeEanContentAsText;
+        }
+
         public void Render(IBarcode barcode, Stream outputStream)
         {
             barcode = barcode ?? throw new ArgumentNullException(nameof(barcode));
             outputStream = outputStream ?? throw new ArgumentNullException(nameof(outputStream));
             if (barcode.Bounds.Y == 1)
             {
-                if (barcode.Metadata.CodeKind == BarcodeType.EAN8C)
+                if (_includeEanContentAsText && barcode.Metadata.CodeKind == BarcodeType.EAN8)
                 {
                     Render1DEan8C(barcode, outputStream);
                 }
-                else if (barcode.Metadata.CodeKind == BarcodeType.EAN13C)
+                else if (_includeEanContentAsText && barcode.Metadata.CodeKind == BarcodeType.EAN13)
                 {
                     Render1DEan13C(barcode, outputStream);
                 }

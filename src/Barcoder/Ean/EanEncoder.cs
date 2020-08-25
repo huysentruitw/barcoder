@@ -6,13 +6,11 @@ namespace Barcoder.Ean
 {
     public static class EanEncoder
     {
-        public static IBarcodeIntCS Encode(string content, bool renderContent = true)
+        public static IBarcodeIntCS Encode(string content)
         {
-            if (content == null)
-                throw new ArgumentNullException(nameof(content));
+            if (content == null) throw new ArgumentNullException(nameof(content));
 
-            if (!Regex.IsMatch(content, @"^[0-9]*$"))
-                throw new InvalidOperationException("Can only encode numerical digits (0-9)");
+            if (!Regex.IsMatch(content, @"^[0-9]*$")) throw new InvalidOperationException("Can only encode numerical digits (0-9)");
 
             var checksum = 0;
             if (content.Length == 7 || content.Length == 12)
@@ -32,14 +30,12 @@ namespace Barcoder.Ean
             if (content.Length == 8)
             {
                 BitList result = EncodeEan8(content);
-                string t = renderContent ? BarcodeType.EAN8C : BarcodeType.EAN8;
-                return new Base1DCodeIntCS(result, t, content, checksum, Constants.Margin);
+                return new Base1DCodeIntCS(result, BarcodeType.EAN8, content, checksum, Constants.Margin);
             }
             else if (content.Length == 13)
             {
                 BitList result = EncodeEan13(content);
-                string t = renderContent ? BarcodeType.EAN13C : BarcodeType.EAN13;
-                return new Base1DCodeIntCS(result, t, content, checksum, Constants.Margin);
+                return new Base1DCodeIntCS(result, BarcodeType.EAN13, content, checksum, Constants.Margin);
             }
 
             throw new InvalidOperationException("Invalid content length. Should be 7 or 12 if the code does not include a checksum, 8 or 13 if the code already includes a checksum");

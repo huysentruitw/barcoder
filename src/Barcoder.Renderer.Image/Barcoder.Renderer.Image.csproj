@@ -15,14 +15,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="arial.ttf" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <EmbeddedResource Include="arial.ttf" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="SixLabors.ImageSharp.Drawing" Version="1.0.0-beta0006" />
   </ItemGroup>
 

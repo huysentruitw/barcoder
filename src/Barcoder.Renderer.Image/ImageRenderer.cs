@@ -23,22 +23,26 @@ namespace Barcoder.Renderer.Image
         private readonly IImageEncoder _imageEncoder;
         private readonly int _pixelSize;
         private readonly int _barHeightFor1DBarcode;
+        private readonly bool _includeEanContentAsText;
+        private readonly string _eanFontFamily;
 
         public ImageRenderer(
             int pixelSize = 10,
             int barHeightFor1DBarcode = 40,
             ImageFormat imageFormat = ImageFormat.Png,
-            int jpegQuality = 75)
+            int jpegQuality = 75,
+            bool includeEanContentAsText = false,
+            string eanFontFamily = null)
         {
-            if (pixelSize <= 0)
-                throw new ArgumentOutOfRangeException(nameof(pixelSize), "Value must be larger than zero");
-            if (barHeightFor1DBarcode <= 0)
-                throw new ArgumentOutOfRangeException(nameof(barHeightFor1DBarcode), "Value must be larger than zero");
-            if (jpegQuality < 0 || jpegQuality > 100)
-                throw new ArgumentOutOfRangeException(nameof(jpegQuality), "Value must be a value between 0 and 100");
+            if (pixelSize <= 0) throw new ArgumentOutOfRangeException(nameof(pixelSize), "Value must be larger than zero");
+            if (barHeightFor1DBarcode <= 0) throw new ArgumentOutOfRangeException(nameof(barHeightFor1DBarcode), "Value must be larger than zero");
+            if (jpegQuality < 0 || jpegQuality > 100) throw new ArgumentOutOfRangeException(nameof(jpegQuality), "Value must be a value between 0 and 100");
+            
             _pixelSize = pixelSize;
             _barHeightFor1DBarcode = barHeightFor1DBarcode;
             _imageEncoder = GetImageEncoder(imageFormat, jpegQuality);
+            _includeEanContentAsText = includeEanContentAsText;
+            _eanFontFamily = eanFontFamily ?? "Arial";
         }
 
         private static IImageEncoder GetImageEncoder(ImageFormat imageFormat, int jpegQuality)
@@ -64,7 +68,7 @@ namespace Barcoder.Renderer.Image
             outputStream = outputStream ?? throw new ArgumentNullException(nameof(outputStream));
             if (barcode.Bounds.Y == 1)
             {
-                if (barcode.Metadata.CodeKind == BarcodeType.EAN8C || barcode.Metadata.CodeKind == BarcodeType.EAN13C)
+                if (_includeEanContentAsText)
                 {
                     Render1DWithContent(barcode, outputStream);
                 }
@@ -129,7 +133,7 @@ namespace Barcoder.Renderer.Image
                             continue;
 
                 
-                        if ((barcode.Metadata.CodeKind == BarcodeType.EAN8C && longerBarsEan8.Contains(x)) || (barcode.Metadata.CodeKind == BarcodeType.EAN13C && longerBarsEan13.Contains(x)))
+                        if ((barcode.Metadata.CodeKind == BarcodeType.EAN8 && longerBarsEan8.Contains(x)) || (barcode.Metadata.CodeKind == BarcodeType.EAN13 && longerBarsEan13.Contains(x)))
                         {
                             ctx.FillPolygon(
                             black,
@@ -152,14 +156,14 @@ namespace Barcoder.Renderer.Image
 
                     Font font = GetFont();
                     float y = (_barHeightFor1DBarcode + (contentMargin / 4)) * _pixelSize;
-                    if (barcode.Metadata.CodeKind == BarcodeType.EAN8C)
+                    if (barcode.Metadata.CodeKind == BarcodeType.EAN8)
                     {
                         string text1 = barcode.Content.Substring(0, 4);
                         string text2 = barcode.Content.Substring(4);
                         image.Mutate(x => x.DrawText(text1, font, black, new PointF(17 * _pixelSize, y)));
                         image.Mutate(x => x.DrawText(text2, font, black, new PointF(49 * _pixelSize, y)));
                     }
-                    else if (barcode.Metadata.CodeKind == BarcodeType.EAN13C)
+                    else if (barcode.Metadata.CodeKind == BarcodeType.EAN13)
                     {
                         string text1 = barcode.Content.Substring(0, 1);
                         string text2 = barcode.Content.Substring(1, 6);
@@ -209,12 +213,8 @@ namespace Barcoder.Renderer.Image
 
         private Font GetFont()
         {
-            FontCollection collection = new FontCollection();
-            var assembly = Assembly.GetExecutingAssembly();
-            var stream = assembly.GetManifestResourceStream(GetType(), "arial.ttf");
-            FontFamily family = collection.Install(stream);
             float fontSize = 9;
-            return family.CreateFont(fontSize * _pixelSize, FontStyle.Italic);
+            return SystemFonts.CreateFont(_eanFontFamily, fontSize * _pixelSize, FontStyle.Regular);
         }
     }
 }

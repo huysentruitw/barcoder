@@ -13,7 +13,7 @@ namespace Barcoder.Tests.Ean
         [InlineData("5512345", "1010110001011000100110010010011010101000010101110010011101000100101", BarcodeType.EAN8, false)]
         public void Encode(string testCode, string testResult, string kind, bool checkContent)
         {
-            IBarcodeIntCS code = EanEncoder.Encode(testCode, renderContent: false);
+            IBarcodeIntCS code = EanEncoder.Encode(testCode);
             if (checkContent)
                 code.Content.Should().Be(testCode);
 

@@ -9,9 +9,7 @@ namespace Barcoder
         public const string Code93 = "Code 93";
         public const string DataMatrix = "DataMatrix";
         public const string EAN8 = "EAN 8";
-        public const string EAN8C = "EAN 8 render content";
         public const string EAN13 = "EAN 13";
-        public const string EAN13C = "EAN 13 render content";
         public const string PDF417 = "PDF417";
         public const string QR = "QR Code";
         public const string TwoOfFive = "2 of 5";
