@@ -1,5 +1,7 @@
 using System;
 using System.IO;
+using System.Linq;
+using System.Xml.XPath;
 using Barcoder.Renderers;
 using SvgLib;
 
@@ -7,6 +9,22 @@ namespace Barcoder.Renderer.Svg
 {
     public sealed class SvgRenderer : IRenderer
     {
+        private readonly bool _includeEanContentAsText;
+
+        public SvgRenderer(bool includeEanContentAsText = false)
+        {
+            _includeEanContentAsText = includeEanContentAsText;
+        }
+
+        private bool IncludeEanContent(IBarcode barcode)
+        {
+            if (_includeEanContentAsText && (barcode.Metadata.CodeKind == BarcodeType.EAN13 || barcode.Metadata.CodeKind == BarcodeType.EAN8))
+            {
+                return true;
+            }
+            return false;
+        }
+
         public void Render(IBarcode barcode, Stream outputStream)
         {
             barcode = barcode ?? throw new ArgumentNullException(nameof(barcode));
@@ -19,15 +37,16 @@ namespace Barcoder.Renderer.Svg
                 throw new NotSupportedException($"Y value of {barcode.Bounds.Y} is invalid");
         }
 
-        private static void Render1D(IBarcode barcode, Stream outputStream)
+        private void Render1D(IBarcode barcode, Stream outputStream)
         {
             var document = SvgDocument.Create();
+            int height = IncludeEanContent(barcode) ? 55 : 50;
             document.ViewBox = new SvgViewBox
             {
                 Left = 0,
                 Top = 0,
                 Width = barcode.Bounds.X + 2 * barcode.Margin,
-                Height = 50
+                Height = height
             };
             document.Fill = "#FFFFFF";
             document.Stroke = "#000000";
@@ -44,29 +63,77 @@ namespace Barcoder.Renderer.Svg
                 }
 
                 SvgLine line;
+                int lineHeight = height;
+                var ean8LongerBars = new int[] { 0, 2, 32, 34, 64, 66 };
+                var ean13LongerBars = new int[] { 0, 2, 46, 48, 92, 94 };
+                if (IncludeEanContent(barcode))
+                {
+                    if (barcode.Metadata.CodeKind == BarcodeType.EAN13)
+                    {
+                        if (!ean13LongerBars.Contains(x))
+                        {
+                            lineHeight = 48;
+                        }
+                    }
+                    else
+                    {
+                        if (!ean8LongerBars.Contains(x))
+                        {
+                            lineHeight = 48;
+                        }
+                    }
+                }
+                
                 if (prevBar)
                 {
                     line = document.AddLine();
                     line.StrokeWidth = 1.5;
                     line.X1 = line.X2 = x + barcode.Margin - 0.25;
                     line.Y1 = 0;
-                    line.Y2 = 50;
+                    line.Y2 = lineHeight;
                 }
                 else
                 {
                     line = document.AddLine();
                     line.X1 = line.X2 = x + barcode.Margin;
                     line.Y1 = 0;
-                    line.Y2 = 50;
+                    line.Y2 = lineHeight;
                 }
 
                 prevBar = true;
             }
 
+            if (IncludeEanContent(barcode))
+            {
+                if (barcode.Metadata.CodeKind == BarcodeType.EAN13)
+                {
+                    AddText(document, 4, 54.5D, barcode.Content.Substring(0, 1));
+                    AddText(document, 21, 54.5D, barcode.Content.Substring(1, 6));
+                    AddText(document, 67, 54.5D, barcode.Content.Substring(7));
+                }
+                else
+                {
+                    AddText(document, 18, 54.5D, barcode.Content.Substring(0, 4));
+                    AddText(document, 50, 54.5D, barcode.Content.Substring(4));
+                }
+            }
+            
             document.Save(outputStream);
         }
 
-        private static void Render2D(IBarcode barcode, Stream outputStream)
+        private void AddText(SvgDocument doc, double x, double y, string t)
+        {
+            var text = doc.AddText();
+            text.FontFamily = "arial";
+            text.Text = t;
+            text.X = x;
+            text.Y = y;
+            text.StrokeWidth = 0;
+            text.Fill = "#000000";
+            text.FontSize = 8D;
+        }
+
+        private void Render2D(IBarcode barcode, Stream outputStream)
         {
             var document = SvgDocument.Create();
             document.ViewBox = new SvgViewBox

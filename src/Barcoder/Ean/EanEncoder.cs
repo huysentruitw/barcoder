@@ -8,11 +8,9 @@ namespace Barcoder.Ean
     {
         public static IBarcodeIntCS Encode(string content)
         {
-            if (content == null)
-                throw new ArgumentNullException(nameof(content));
+            if (content == null) throw new ArgumentNullException(nameof(content));
 
-            if (!Regex.IsMatch(content, @"^[0-9]*$"))
-                throw new InvalidOperationException("Can only encode numerical digits (0-9)");
+            if (!Regex.IsMatch(content, @"^[0-9]*$")) throw new InvalidOperationException("Can only encode numerical digits (0-9)");
 
             var checksum = 0;
             if (content.Length == 7 || content.Length == 12)
