@@ -1,7 +1,6 @@
 using System;
 using System.IO;
 using System.Linq;
-using System.Xml.XPath;
 using Barcoder.Renderers;
 using SvgLib;
 
@@ -9,6 +8,8 @@ namespace Barcoder.Renderer.Svg
 {
     public sealed class SvgRenderer : IRenderer
     {
+        private static readonly int[] Ean8LongerBars = new[] { 0, 2, 32, 34, 64, 66 };
+        private static readonly int[] Ean13LongerBars = new[] { 0, 2, 46, 48, 92, 94 };
         private readonly bool _includeEanContentAsText;
 
         public SvgRenderer(bool includeEanContentAsText = false)
@@ -17,13 +18,7 @@ namespace Barcoder.Renderer.Svg
         }
 
         private bool IncludeEanContent(IBarcode barcode)
-        {
-            if (_includeEanContentAsText && (barcode.Metadata.CodeKind == BarcodeType.EAN13 || barcode.Metadata.CodeKind == BarcodeType.EAN8))
-            {
-                return true;
-            }
-            return false;
-        }
+            => _includeEanContentAsText && (barcode.Metadata.CodeKind == BarcodeType.EAN13 || barcode.Metadata.CodeKind == BarcodeType.EAN8);
 
         public void Render(IBarcode barcode, Stream outputStream)
         {
@@ -64,26 +59,24 @@ namespace Barcoder.Renderer.Svg
 
                 SvgLine line;
                 int lineHeight = height;
-                var ean8LongerBars = new int[] { 0, 2, 32, 34, 64, 66 };
-                var ean13LongerBars = new int[] { 0, 2, 46, 48, 92, 94 };
                 if (IncludeEanContent(barcode))
                 {
                     if (barcode.Metadata.CodeKind == BarcodeType.EAN13)
                     {
-                        if (!ean13LongerBars.Contains(x))
+                        if (!Ean13LongerBars.Contains(x))
                         {
                             lineHeight = 48;
                         }
                     }
                     else
                     {
-                        if (!ean8LongerBars.Contains(x))
+                        if (!Ean8LongerBars.Contains(x))
                         {
                             lineHeight = 48;
                         }
                     }
                 }
-                
+
                 if (prevBar)
                 {
                     line = document.AddLine();
@@ -117,13 +110,13 @@ namespace Barcoder.Renderer.Svg
                     AddText(document, 50, 54.5D, barcode.Content.Substring(4));
                 }
             }
-            
+
             document.Save(outputStream);
         }
 
         private void AddText(SvgDocument doc, double x, double y, string t)
         {
-            var text = doc.AddText();
+            SvgText text = doc.AddText();
             text.FontFamily = "arial";
             text.Text = t;
             text.X = x;
