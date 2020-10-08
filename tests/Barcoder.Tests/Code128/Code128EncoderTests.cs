@@ -82,7 +82,7 @@ namespace Barcoder.Tests.Code128
             "11001000100" + // 10
             "10110011100" + // 12
             EncCodeB + 
-            "11001011100" + //
+            "11001011100" + // 3
             "10001110110" + // Checksum = 'O'
             EncStop)]
         public void Encode_GS1(string txt, string testResult)
