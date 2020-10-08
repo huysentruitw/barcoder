@@ -101,7 +101,6 @@ namespace Barcoder.Tests.Code128
             encoded.Should().Be(testResult);
         } 
 
-
         [Fact]
         public void Encode_ShouldUseCTable()
         {
