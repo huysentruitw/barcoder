@@ -6,9 +6,12 @@ namespace Barcoder.Code128
 {
     public static class Code128Encoder
     {
-        public static IBarcodeIntCS Encode(string content, bool includeChecksum = true)
+        public static IBarcodeIntCS Encode(string content, bool includeChecksum = true, bool gs1ModeEnabled = false)
         {
             if (content == null) throw new ArgumentNullException(nameof(content));
+
+            if (gs1ModeEnabled)
+                content = Gs1Encoder.Encode(content, Constants.FNC1);
 
             char[] contentChars = content.ToCharArray();
             if (contentChars.Length <= 0 || contentChars.Length > 80)

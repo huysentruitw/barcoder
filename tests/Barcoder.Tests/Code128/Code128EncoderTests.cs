@@ -12,6 +12,8 @@ namespace Barcoder.Tests.Code128
         private const string FNC3      = "\u00f3";
         private const string FNC4      = "\u00f4";
         private const string EncFNC1   = "11110101110";
+        private const string EncCodeC  = "10111011110";
+        private const string EncCodeB  = "10111101110";
         private const string EncFNC2   = "11110101000";
         private const string EncFNC3   = "10111100010";
         private const string EncFNC4   = "10111101110";
@@ -64,6 +66,40 @@ namespace Barcoder.Tests.Code128
                 encoded += code.At(i++, 0) ? "1" : "0";
             encoded.Should().Be(testResult);
         }
+
+        [Theory]
+        [InlineData("(241)ABC(10)123", 
+            EncStartB + 
+            EncFNC1 + 
+            "11001110010" + // 2
+            "11001001110" + // 4
+            "10011100110" + // 1
+            "10100011000" + // A
+            "10001011000" + // B
+            "10001000110" + // C
+            EncCodeC + 
+            EncFNC1 + 
+            "11001000100" + // 10
+            "10110011100" + // 12
+            EncCodeB + 
+            "11001011100" + // 3
+            "10001110110" + // Checksum = 'O'
+            EncStop)]
+        public void Encode_GS1(string txt, string testResult)
+        {
+            IBarcodeIntCS code = Code128Encoder.Encode(txt, gs1ModeEnabled: true);
+
+            code.Bounds.X.Should().Be(testResult.Length);
+            code.Bounds.Y.Should().Be(1);
+            code.Metadata.CodeKind.Should().Be(BarcodeType.Code128);
+            code.Metadata.Dimensions.Should().Be(1);
+
+            string encoded = string.Empty;
+            int i = 0;
+            foreach (var r in testResult)
+                encoded += code.At(i++, 0) ? "1" : "0";
+            encoded.Should().Be(testResult);
+        } 
 
         [Fact]
         public void Encode_ShouldUseCTable()
