@@ -7,14 +7,14 @@ namespace Barcoder.DataMatrix
 {
     public static class DataMatrixEncoder
     {
-        public static IBarcode Encode(string content, int? fixedNumberOfRows = null, bool gs1ModeEnabled = false)
+        public static IBarcode Encode(string content, int? fixedNumberOfRows = null, int? fixedNumberOfColumns = null, bool gs1ModeEnabled = false)
         {
             var data = gs1ModeEnabled
                 ? EncodeGs1(content)
                 : EncodeText(content);
 
             CodeSize size = fixedNumberOfRows.HasValue
-                ? GetFixedCodeSizeForData(fixedNumberOfRows.Value, data.Length)
+                ? GetFixedCodeSizeForData(fixedNumberOfRows.Value, fixedNumberOfColumns ?? fixedNumberOfRows.Value, data.Length)
                 : GetSmallestCodeSizeForData(data.Length);
 
             data = AddPadding(data, size.DataCodewords);
@@ -25,10 +25,10 @@ namespace Barcoder.DataMatrix
             return code;
         }
 
-        private static CodeSize GetFixedCodeSizeForData(int fixedNumberOfRows, int dataLength)
+        private static CodeSize GetFixedCodeSizeForData(int fixedNumberOfRows, int fixedNumberOfColumns, int dataLength)
         {
-            CodeSize codeSize = CodeSizes.All.FirstOrDefault(x => x.Rows == fixedNumberOfRows)
-                ?? throw new InvalidOperationException($"No code size found with fixed number of rows {fixedNumberOfRows}");
+            CodeSize codeSize = CodeSizes.All.FirstOrDefault(x => x.Rows == fixedNumberOfRows && x.Columns == fixedNumberOfColumns)
+                ?? throw new InvalidOperationException($"No code size found with fixed number of rows {fixedNumberOfRows} and columns {fixedNumberOfColumns}");
             if (codeSize.DataCodewords < dataLength)
                 throw new InvalidOperationException($"The fixed code size does not fit {dataLength} codewords");
             return codeSize;
