@@ -28,9 +28,9 @@ namespace Barcoder.DataMatrix
 
         public int RegionColumns => (Columns - (RegionCountHorizontal * 2)) / RegionCountHorizontal;
 
-        public int MatrixRows => RegionRows * RegionCountHorizontal;
+        public int MatrixRows => RegionRows * RegionCountVertical;
 
-        public int MatrixColumns => RegionColumns * RegionCountVertical;
+        public int MatrixColumns => RegionColumns * RegionCountHorizontal;
 
         public int DataCodewords => ((MatrixColumns * MatrixRows) / 8) - EccCount;
 
