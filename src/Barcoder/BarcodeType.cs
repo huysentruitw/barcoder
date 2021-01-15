@@ -14,7 +14,7 @@ namespace Barcoder
         public const string QR = "QR Code";
         public const string TwoOfFive = "2 of 5";
         public const string TwoOfFiveInterleaved = "2 of 5 (interleaved)";
-        public const string RM4SCC = "RM4SCC";
+        public const string RM4SC = "RM4SC";
         public const string KixCode = "KIX-code";
     }
 }

@@ -1,24 +1,22 @@
 using Barcoder.Utils;
 
-namespace Barcoder.Rm4scc
+namespace Barcoder.RoyalMail
 {
-    public sealed class Rm4sccCode : IBarcode
+    public sealed class RoyalMailFourStateCode : IBarcode
     {
         private readonly BitList _data;
-
         private readonly int _width;
 
-        private const int HEIGHT = 8;
-
-        internal Rm4sccCode(BitList data, int width, bool isKixCode)
+        internal RoyalMailFourStateCode(string content, BitList data, int width)
         {
-            Metadata = new Metadata(isKixCode ? BarcodeType.KixCode : BarcodeType.RM4SCC, 2);
+            Content = content;
             _data = data;
             _width = width;
-            Bounds = new Bounds(width, HEIGHT);
+            Bounds = new Bounds(width, Constants.BARCODE_HEIGHT);
+            Metadata = new Metadata(BarcodeType.RM4SC, 2);
         }
 
-        public string Content { get; internal set; }
+        public string Content { get; }
 
         public Bounds Bounds { get; }
 

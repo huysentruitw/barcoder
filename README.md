@@ -18,8 +18,10 @@ Supported Barcode Types:
 * Data Matrix GS1
 * EAN 8
 * EAN 13
+* KIX (used by PostNL)  
 * PDF 417
 * QR Code
+* RM4SC (Royal Mail 4 State Code)
 
 ## NuGet package
 
