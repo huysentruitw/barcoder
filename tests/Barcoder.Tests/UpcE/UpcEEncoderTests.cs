@@ -45,7 +45,7 @@ namespace Barcoder.Tests.UpcE
         {
             Action action = () => UpcEEncoder.Encode("654321", (UpcENumberSystem)2);
             action.Should().Throw<InvalidOperationException>()
-                .WithMessage("Only number systems 0 and 1 are supported by UPC-E");
+                .WithMessage("Only number systems 0 and 1 are supported by UPC E");
         }
 
         [Fact]

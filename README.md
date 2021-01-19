@@ -22,6 +22,8 @@ Supported Barcode Types:
 * PDF 417
 * QR Code
 * RM4SC (Royal Mail 4 State Code)
+* UPC A
+* UPC E
 
 ## NuGet package
 

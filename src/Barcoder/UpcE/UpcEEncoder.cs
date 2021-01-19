@@ -15,7 +15,7 @@ namespace Barcoder.UpcE
                 throw new InvalidOperationException("Can only encode numerical digits (0-9)");
 
             if (numberSystem != UpcENumberSystem.Zero && numberSystem != UpcENumberSystem.One)
-                throw new InvalidOperationException("Only number systems 0 and 1 are supported by UPC-E");
+                throw new InvalidOperationException("Only number systems 0 and 1 are supported by UPC E");
 
             if (content.Length != 6)
                 throw new InvalidOperationException("Invalid content length. Should be 6");

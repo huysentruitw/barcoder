@@ -16,7 +16,7 @@ namespace Barcoder
         public const string TwoOfFiveInterleaved = "2 of 5 (interleaved)";
         public const string RM4SC = "RM4SC";
         public const string KixCode = "KIX-code";
-        public const string UPCA = "UPC-A";
-        public const string UPCE = "UPC-E";
+        public const string UPCA = "UPC A";
+        public const string UPCE = "UPC E";
     }
 }
