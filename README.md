@@ -27,7 +27,7 @@ Supported Barcode Types:
 
 ## NuGet package
 
-To install the main package:
+To install the [main package](https://www.nuget.org/packages/Barcoder):
 
     PM> Install-Package Barcoder
 
@@ -61,7 +61,7 @@ using (var reader = new StreamReader(stream))
 Example for rendering to PNG:
 
 ```csharp
-var barcode = QrEncoder.Encode("Hello World!");
+var barcode = QrEncoder.Encode("Hello World!", Barcoder.Qr.ErrorCorrectionLevel.M, Encoding.Auto);
 var renderer = new ImageRenderer(imageFormat: ImageFormat.Png);
 
 using (var stream = new FileStream("output.png", FileMode.Create))
