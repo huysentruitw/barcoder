@@ -27,7 +27,7 @@ Supported Barcode Types:
 
 ## NuGet package
 
-To install the main package:
+To install the [main package](https://www.nuget.org/packages/Barcoder):
 
     PM> Install-Package Barcoder
 
