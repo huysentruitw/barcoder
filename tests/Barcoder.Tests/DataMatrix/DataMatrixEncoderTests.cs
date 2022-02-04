@@ -6,27 +6,41 @@ using Xunit;
 
 namespace Barcoder.Tests.DataMatrix
 {
+    /// <summary>
+    /// https://www.bcgen.com/datamatrix-barcode-creator.html
+    /// X Dimension: 0.03
+    ///
+    /// </summary>
     public sealed class DataMatrixEncoderTests
     {
-        [Fact]
-        public void Encode_12x26()
+        [Theory]
+        [InlineData("GZhdz9hk", @"      #.#.#.#.#.#.#.#.#.#.#.#.#.
+                                        #.#..##..##.###.####..##.#
+                                        #.##.##.######.#...##.###.
+                                        #.#####.#.##....#.#.#.#.##
+                                        ##...###...#......#.......
+                                        #.####.#.#.#.###.##..##..#
+                                        ##.#....######.#......##..
+                                        #.#.#..##.#.###.#..####.##
+                                        #.##.#.##.##...####...##..
+                                        #.##..#..#..#.###..#.##..#
+                                        ##.#.#....#...#...###...#.
+                                        ##########################")]
+        [InlineData("Abc12345Gtzw", @"  #.#.#.#.#.#.#.#.#.#.#.#.#.
+                                        #.##....##..###.###.###.##
+                                        ##..#.##....##.#.#.#.##...
+                                        #.###...#..#...#.#.#.##.##
+                                        #...#..###.#...#.#.#..#...
+                                        #.##..#....#..###.#.....##
+                                        ####.########.#.##.###....
+                                        #.#.#.###.#.###.#.#...##.#
+                                        #..##.###.##.###.##..#....
+                                        #.##.#####.##..#.#..###.##
+                                        ##..#...#.#...#.#......#..
+                                        ##########################")]
+        public void Encode_12x26(string content, string imageStr)
         {
-            var content = "Abc12345Gtzw";
-            var expectedDataBits = ImageStringToBools(@"
-                #.#.#.#.#.#.#.#.#.#.#.#.#.
-                #.##....##..###.###.###.##
-                ##..#.##....##.#.#.#.##...
-                #.###...#..#...#.#.#.##.##
-                #...#..###.#...#.#.#..#...
-                #.##..#....#..###.#.....##
-                ####.########.#.##.###....
-                #.#.#.###.#.###.#.#...##.#
-                #..##.###.##.###.##..#....
-                #.##.#####.##..#.#..###.##
-                ##..#...#.#...#.#......#..
-                ##########################
-
-            ");
+            var expectedDataBits = ImageStringToBools(imageStr);
 
             TestEncode_FixedSize(12, 26, content, expectedDataBits);
         }
@@ -105,20 +119,26 @@ namespace Barcoder.Tests.DataMatrix
             TestEncode_FixedSize(16, 48, content, expectedDataBits);
         }
 
-        [Fact]
-        public void Encode_8x18()
+        [Theory]
+        [InlineData("123456", @"#.#.#.#.#.#.#.#.#.
+                                ##..#.....##.....#
+                                ##...#..##.####.#.
+                                ##..##...#...###.#
+                                ####.##..###..#...
+                                #.####...#...#.###
+                                #....####.##.##.#.
+                                ##################")]
+        [InlineData("Gulz7", @" #.#.#.#.#.#.#.#.#.
+                                #.##.######.#..#.#
+                                ###....##.........
+                                ###.###.....#...##
+                                ###......#..##....
+                                #.##..##.######..#
+                                #...##.#.#......#.
+                                ##################")]
+        public void Encode_8x18(string content, string imageStr)
         {
-            var content = "123456";
-            var expectedDataBits = ImageStringToBools(@"
-                #.#.#.#.#.#.#.#.#.
-                ##..#.....##.....#
-                ##...#..##.####.#.
-                ##..##...#...###.#
-                ####.##..###..#...
-                #.####...#...#.###
-                #....####.##.##.#.
-                ##################
-            ");
+            var expectedDataBits = ImageStringToBools(imageStr);
 
             TestEncode_FixedSize(8, 18, content, expectedDataBits);
         }
@@ -296,7 +316,7 @@ namespace Barcoder.Tests.DataMatrix
             {
                 int x = i % dataMatrix.Bounds.X;
                 int y = i / dataMatrix.Bounds.X;
-                dataMatrix.Get(x, y).Should().Be(expectedDataBits[i], $"of expected bit on index {i}");
+                dataMatrix.Get(x, y).Should().Be(expectedDataBits[i], $"of expected bit on index {i}. x:{x}, y:{y}");
             }
         }
 
@@ -342,7 +362,7 @@ namespace Barcoder.Tests.DataMatrix
             {
                 int x = i % dataMatrix.Bounds.X;
                 int y = i / dataMatrix.Bounds.X;
-                dataMatrix.Get(x, y).Should().Be(expectedDataBits[i], $"of expected bit on index {i}");
+                dataMatrix.Get(x, y).Should().Be(expectedDataBits[i], $"of expected bit on index {i}. x:{x}, y:{y}");
             }
         }
     }
