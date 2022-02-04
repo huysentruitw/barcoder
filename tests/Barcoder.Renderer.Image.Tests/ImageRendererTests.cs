@@ -7,6 +7,7 @@ using Barcoder.Renderers;
 using FluentAssertions;
 using Moq;
 using SixLabors.ImageSharp.Formats;
+using SixLabors.ImageSharp.PixelFormats;
 using Xunit;
 using ImageSharp = SixLabors.ImageSharp;
 
@@ -18,7 +19,7 @@ namespace Barcoder.Renderer.Image.Tests
         public void Render_PassNullAsBarcode_ShouldThrowException()
         {
             // Arrange
-            var renderer = new ImageRenderer();
+            var renderer = new ImageRenderer<Gray8>();
             var stream = new MemoryStream();
 
             // Act
@@ -33,7 +34,7 @@ namespace Barcoder.Renderer.Image.Tests
         public void Render_PassNullAsOutputStream_ShouldThrowException()
         {
             // Arrange
-            var renderer = new ImageRenderer();
+            var renderer = new ImageRenderer<Gray8>();
             var barcodeMock = new Mock<IBarcode>();
 
             // Act
@@ -48,7 +49,7 @@ namespace Barcoder.Renderer.Image.Tests
         public void Render_Barcode1D()
         {
             // Arrange
-            var renderer = new ImageRenderer();
+            var renderer = new ImageRenderer<Gray8>();
             IBarcode barcode = Code128Encoder.Encode("Wikipedia");
 
             // Act
@@ -62,7 +63,7 @@ namespace Barcoder.Renderer.Image.Tests
         public void Render_Barcode2D()
         {
             // Arrange
-            var renderer = new ImageRenderer();
+            var renderer = new ImageRenderer<Gray8>();
             IBarcode barcode = QrEncoder.Encode("Hello Unicode\nHave a nice day!", ErrorCorrectionLevel.L, Encoding.Unicode);
 
             // Act
@@ -76,7 +77,7 @@ namespace Barcoder.Renderer.Image.Tests
         public void Render_ImageFormatBmp_ShouldRenderBmp()
         {
             // Arrange
-            var renderer = new ImageRenderer(imageFormat: ImageFormat.Bmp);
+            var renderer = new ImageRenderer<Gray8>(imageFormat: ImageFormat.Bmp);
             IBarcode barcode = QrEncoder.Encode("Hello", ErrorCorrectionLevel.L, Encoding.Unicode);
             using var stream = new MemoryStream();
 
@@ -93,7 +94,7 @@ namespace Barcoder.Renderer.Image.Tests
         public void Render_ImageFormatGif_ShouldRenderGif()
         {
             // Arrange
-            var renderer = new ImageRenderer(imageFormat: ImageFormat.Gif);
+            var renderer = new ImageRenderer<Gray8>(imageFormat: ImageFormat.Gif);
             IBarcode barcode = QrEncoder.Encode("Hello", ErrorCorrectionLevel.L, Encoding.Unicode);
             using var stream = new MemoryStream();
 
@@ -110,7 +111,7 @@ namespace Barcoder.Renderer.Image.Tests
         public void Render_ImageFormatJpeg_ShouldRenderJpeg()
         {
             // Arrange
-            var renderer = new ImageRenderer(imageFormat: ImageFormat.Jpeg);
+            var renderer = new ImageRenderer<Gray8>(imageFormat: ImageFormat.Jpeg);
             IBarcode barcode = QrEncoder.Encode("Hello", ErrorCorrectionLevel.L, Encoding.Unicode);
             using var stream = new MemoryStream();
 
@@ -127,7 +128,7 @@ namespace Barcoder.Renderer.Image.Tests
         public void Render_ImageFormatPng_ShouldRenderPng()
         {
             // Arrange
-            var renderer = new ImageRenderer(imageFormat: ImageFormat.Png);
+            var renderer = new ImageRenderer<Gray8>(imageFormat: ImageFormat.Png);
             IBarcode barcode = QrEncoder.Encode("Hello", ErrorCorrectionLevel.L, Encoding.Unicode);
             using var stream = new MemoryStream();
 
@@ -150,7 +151,7 @@ namespace Barcoder.Renderer.Image.Tests
         [Fact(Skip = "Integration test")]
         public void Render_Ean8_IncludeContentAsText()
         {
-            var renderer = new ImageRenderer(imageFormat: ImageFormat.Png, includeEanContentAsText: true);
+            var renderer = new ImageRenderer<Gray8>(imageFormat: ImageFormat.Png, includeEanContentAsText: true);
             IBarcode barcode = EanEncoder.Encode("1234567");
             using Stream stream = File.OpenWrite(@"d:\temp\ean-test.png");
             renderer.Render(barcode, stream);
@@ -159,7 +160,7 @@ namespace Barcoder.Renderer.Image.Tests
         [Fact(Skip = "Integration test")]
         public void Render_Ean13_IncludeContentAsText()
         {
-            var renderer = new ImageRenderer(imageFormat: ImageFormat.Png, includeEanContentAsText: true);
+            var renderer = new ImageRenderer<Gray8>(imageFormat: ImageFormat.Png, includeEanContentAsText: true);
             IBarcode barcode = EanEncoder.Encode("978020137962");
             using Stream stream = File.OpenWrite(@"d:\temp\ean-test.png");
             renderer.Render(barcode, stream);
