@@ -6,7 +6,7 @@
     <Description>Image Renderer for Barcoder (.NET Framework, .NET Standard and .NET Core).</Description>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Company>Wouter Huysentruit</Company>
-    <Version>1.0.0-beta0006</Version>
+    <Version>1.0.0-beta13</Version>
     <Authors>Wouter Huysentruit</Authors>
     <PackageProjectUrl>https://github.com/huysentruitw/barcoder</PackageProjectUrl>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
@@ -15,7 +15,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="SixLabors.ImageSharp.Drawing" Version="1.0.0-beta0006" />
+    <PackageReference Include="SixLabors.ImageSharp.Drawing" Version="1.0.0-beta13" />
   </ItemGroup>
 
   <ItemGroup>
