@@ -152,7 +152,7 @@ namespace Barcoder.Renderer.Image.Tests
         {
             var renderer = new ImageRenderer(imageFormat: ImageFormat.Png, includeEanContentAsText: true);
             IBarcode barcode = EanEncoder.Encode("1234567");
-            using Stream stream = File.OpenWrite(@"d:\temp\ean-test.png");
+            using Stream stream = File.OpenWrite(@"d:\temp\ean8-test.png");
             renderer.Render(barcode, stream);
         }
 
@@ -161,7 +161,7 @@ namespace Barcoder.Renderer.Image.Tests
         {
             var renderer = new ImageRenderer(imageFormat: ImageFormat.Png, includeEanContentAsText: true);
             IBarcode barcode = EanEncoder.Encode("978020137962");
-            using Stream stream = File.OpenWrite(@"d:\temp\ean-test.png");
+            using Stream stream = File.OpenWrite(@"d:\temp\ean13-test.png");
             renderer.Render(barcode, stream);
         }
     }
