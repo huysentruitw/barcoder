@@ -1,9 +1,9 @@
 ﻿using System.Numerics;
 using SixLabors.Fonts;
 using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.Drawing.Processing;
 using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp.Processing;
-using SixLabors.Primitives;
 
 namespace Barcoder.Renderer.Image.Internal
 {
@@ -13,7 +13,7 @@ namespace Barcoder.Renderer.Image.Internal
         private const int ContentMargin = 9;
         private const int ContentVerticalOffset = 0;
 
-        public static void Render(Image<Gray8> image, IBarcode barcode, string fontFamily, int scale)
+        public static void Render(Image<L8> image, IBarcode barcode, string fontFamily, int scale)
         {
             Font font = SystemFonts.CreateFont(fontFamily, UnscaledFontSize * scale, FontStyle.Regular);
 
@@ -28,7 +28,7 @@ namespace Barcoder.Renderer.Image.Internal
             }
         }
 
-        private static void RenderContentForEan8(Image<Gray8> image, string content, Font font, int margin, int scale)
+        private static void RenderContentForEan8(Image<L8> image, string content, Font font, int margin, int scale)
         {
             int ApplyScale(int value) => value * scale;
             RenderWhiteRect(image, ApplyScale(margin + 3), image.Height - ApplyScale(margin + ContentMargin), ApplyScale(29), ApplyScale(ContentMargin));
@@ -41,7 +41,7 @@ namespace Barcoder.Renderer.Image.Internal
             RenderBlackText(image, content.Substring(4), textCenter2, textTop, font);
         }
 
-        private static void RenderContentForEan13(Image<Gray8> image, string content, Font font, int margin, int scale)
+        private static void RenderContentForEan13(Image<L8> image, string content, Font font, int margin, int scale)
         {
             int ApplyScale(int value) => value * scale;
             RenderWhiteRect(image, ApplyScale(margin + 3), image.Height - ApplyScale(margin + ContentMargin), ApplyScale(43), ApplyScale(ContentMargin));
@@ -56,25 +56,26 @@ namespace Barcoder.Renderer.Image.Internal
             RenderBlackText(image, content.Substring(7), textCenter3, textTop, font);
         }
 
-        private static void RenderWhiteRect(Image<Gray8> image, int x, int y, int width, int height)
+        private static void RenderWhiteRect(Image<L8> image, int x, int y, int width, int height)
         {
             image.Mutate(ctx => ctx.FillPolygon(
-                NamedColors<Gray8>.White,
+                Color.White,
                 new Vector2(x, y),
                 new Vector2(x + width, y),
                 new Vector2(x + width, y + height),
                 new Vector2(x, y + height)));
         }
 
-        private static void RenderBlackText(Image<Gray8> image, string text, float x, float y, Font font)
+        private static void RenderBlackText(Image<L8> image, string text, float x, float y, Font font)
         {
-            var options = new TextGraphicsOptions
+            var options = new TextOptions(font)
             {
                 HorizontalAlignment = HorizontalAlignment.Center,
                 VerticalAlignment = VerticalAlignment.Center,
+                Origin = new PointF(x, y),
             };
 
-            image.Mutate(ctx => ctx.DrawText(options, text, font, NamedColors<Gray8>.Black, new PointF(x, y)));
+            image.Mutate(ctx => ctx.DrawText(options, text, Color.Black));
         }
     }
 }
