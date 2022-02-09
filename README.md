@@ -1,6 +1,6 @@
 # Barcoder - Barcode Encoding Library
 
-[![Build status](https://ci.appveyor.com/api/projects/status/x6dhc3m70nxj30mx/branch/master?svg=true)](https://ci.appveyor.com/project/huysentruitw/barcoder/branch/master)
+[![Build status](https://github.com/huysentruitw/barcoder/actions/workflows/build-test-publish.yml/badge.svg?branch=master)](https://github.com/huysentruitw/barcoder/actions/workflows/build-test-publish.yml?query=branch%3Amaster)
 
 Lightweight Barcode Encoding Library for .NET Framework, .NET Standard and .NET Core. Additional packages are available for rendering the generated barcode to SVG or an image.
 
