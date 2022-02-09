@@ -13,9 +13,7 @@ namespace Barcoder.DataMatrix
                 ? EncodeGs1(content)
                 : EncodeText(content);
 
-            CodeSize size = fixedNumberOfRows.HasValue
-                ? GetFixedCodeSizeForData(fixedNumberOfRows.Value, fixedNumberOfColumns ?? fixedNumberOfRows.Value, data.Length)
-                : GetSmallestCodeSizeForData(data.Length);
+            CodeSize size = GetMatchingCodeSize(fixedNumberOfRows, fixedNumberOfColumns, data.Length);
 
             data = AddPadding(data, size.DataCodewords);
             data = ErrorCorrection.CalculateEcc(data, size);
@@ -25,19 +23,21 @@ namespace Barcoder.DataMatrix
             return code;
         }
 
-        private static CodeSize GetFixedCodeSizeForData(int fixedNumberOfRows, int fixedNumberOfColumns, int dataLength)
+        private static CodeSize GetMatchingCodeSize(int? fixedNumberOfRows, int? fixedNumberOfColumns, int dataLength)
         {
-            CodeSize codeSize = CodeSizes.All.FirstOrDefault(x => x.Rows == fixedNumberOfRows && x.Columns == fixedNumberOfColumns)
-                ?? throw new InvalidOperationException($"No code size found with fixed number of rows {fixedNumberOfRows} and columns {fixedNumberOfColumns}");
-            if (codeSize.DataCodewords < dataLength)
-                throw new InvalidOperationException($"The fixed code size does not fit {dataLength} codewords");
-            return codeSize;
-        }
+            string GetSizeRestrictionText()
+                => $"{fixedNumberOfRows?.ToString() ?? "*"} x {fixedNumberOfColumns?.ToString() ?? "*"}";
 
-        private static CodeSize GetSmallestCodeSizeForData(int dataLength)
-        {
-            return CodeSizes.All.FirstOrDefault(x => x.DataCodewords >= dataLength)
-                ?? throw new InvalidOperationException($"No code size found that fits {dataLength} codewords");
+            IEnumerable<CodeSize> codeSizes = CodeSizes.All;
+
+            if (fixedNumberOfRows.HasValue)
+                codeSizes = codeSizes.Where(x => x.Rows == fixedNumberOfRows.Value);
+
+            if (fixedNumberOfColumns.HasValue)
+                codeSizes = codeSizes.Where(x => x.Columns == fixedNumberOfColumns.Value);
+
+            return codeSizes.FirstOrDefault(x => x.DataCodewords >= dataLength)
+                   ?? throw new InvalidOperationException($"No code size found that fits {dataLength} codewords (size restriction: {GetSizeRestrictionText()})");
         }
 
         private static DataMatrixCode Render(byte[] data, CodeSize size)
