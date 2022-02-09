@@ -92,7 +92,11 @@ namespace Barcoder.DataMatrix
             while (result.Count < toCount)
             {
                 int r = ((149 * (result.Count + 1)) % 253) + 1;
-                result.Add((byte)((129 + r) % 254));
+                int tmp = 129 + r;
+                if (tmp > 254)
+                    tmp -= 254;
+
+                result.Add((byte)tmp);
             }
 
             return result.ToArray();
