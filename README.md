@@ -14,6 +14,7 @@ Supported Barcode Types:
 * Code 39
 * Code 93
 * Code 128
+* Code 128 GS1
 * Data Matrix (ECC 200)
 * Data Matrix GS1
 * EAN 8
@@ -35,7 +36,7 @@ To install the SVG renderer:
 
     PM> Install-Package Barcoder.Renderer.Svg
 
-To install the image renderer:
+To install the image renderer[^1]:
 
 	PM> Install-Package Barcoder.Renderer.Image
 	
@@ -71,3 +72,5 @@ using (var stream = new FileStream("output.png", FileMode.Create))
 ```
 
 Supported image formats can be found [here](/src/Barcoder.Renderer.Image/ImageFormat.cs)
+
+[^1]: The `Barcoder.Renderer.Image` package depends on the cross-platform `SixLabors.ImageSharp.Drawing` library. So when using this package, also respect their [LICENSE](https://github.com/SixLabors/ImageSharp.Drawing/blob/master/LICENSE).
