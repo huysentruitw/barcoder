@@ -4,6 +4,7 @@ using System.Numerics;
 using Barcoder.Renderer.Image.Internal;
 using Barcoder.Renderers;
 using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.Drawing.Processing;
 using SixLabors.ImageSharp.Formats;
 using SixLabors.ImageSharp.Formats.Bmp;
 using SixLabors.ImageSharp.Formats.Gif;
@@ -71,17 +72,17 @@ namespace Barcoder.Renderer.Image
             int width = (barcode.Bounds.X + 2 * barcode.Margin) * _pixelSize;
             int height = (_barHeightFor1DBarcode + 2 * barcode.Margin) * _pixelSize;
 
-            using (var image = new Image<Gray8>(width, height))
+            using (var image = new Image<L8>(width, height))
             {
                 image.Mutate(ctx =>
                 {
-                    ctx.Fill(NamedColors<Gray8>.White);
+                    ctx.Fill(Color.White);
                     for (var x = 0; x < barcode.Bounds.X; x++)
                     {
                         if (!barcode.At(x, 0))
                             continue;
                         ctx.FillPolygon(
-                            NamedColors<Gray8>.Black,
+                            Color.Black,
                             new Vector2((barcode.Margin + x) * _pixelSize, barcode.Margin * _pixelSize),
                             new Vector2((barcode.Margin + x + 1) * _pixelSize, barcode.Margin * _pixelSize),
                             new Vector2((barcode.Margin + x + 1) * _pixelSize, (_barHeightFor1DBarcode + barcode.Margin) * _pixelSize),
@@ -101,18 +102,18 @@ namespace Barcoder.Renderer.Image
             int width = (barcode.Bounds.X + 2 * barcode.Margin) * _pixelSize;
             int height = (barcode.Bounds.Y + 2 * barcode.Margin) * _pixelSize;
 
-            using (var image = new Image<Gray8>(width, height))
+            using (var image = new Image<L8>(width, height))
             {
                 image.Mutate(ctx =>
                 {
-                    ctx.Fill(NamedColors<Gray8>.White);
+                    ctx.Fill(Color.White);
                     for (var y = 0; y < barcode.Bounds.Y; y++)
                     {
                         for (var x = 0; x < barcode.Bounds.X; x++)
                         {
                             if (!barcode.At(x, y)) continue;
                             ctx.FillPolygon(
-                                NamedColors<Gray8>.Black,
+                                Color.Black,
                                 new Vector2((barcode.Margin + x) * _pixelSize, (barcode.Margin + y) * _pixelSize),
                                 new Vector2((barcode.Margin + x + 1) * _pixelSize, (barcode.Margin + y) * _pixelSize),
                                 new Vector2((barcode.Margin + x + 1) * _pixelSize, (barcode.Margin + y + 1) * _pixelSize),
