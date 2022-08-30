@@ -74,7 +74,7 @@ namespace Barcoder.Utils
             new ApplicationIdentifier { Ai = "22", Fnc1Required = true, DataTitle = "CPV", RegularExpression = @"^22([\x21-\x22\x25-\x2F\x30-\x39\x41-\x5A\x5F\x61-\x7A]{0,20})$" },
             new ApplicationIdentifier { Ai = "235", Fnc1Required = false, DataTitle = "TPX", RegularExpression = @"243([\x21-\x22\x25-\x2F\x30-\x39\x41-\x5A\x5F\x61-\x7A]{0,28})$" },
             new ApplicationIdentifier { Ai = "240", Fnc1Required = true, DataTitle = "ADDITIONAL ID", RegularExpression = @"^240([\x21-\x22\x25-\x2F\x30-\x39\x41-\x5A\x5F\x61-\x7A]{0,30})$" },
-            new ApplicationIdentifier { Ai = "241", Fnc1Required = true, DataTitle = "CUST. PART NO.", RegularExpression = @"^241([\x21-\x22\x25-\x2F\x30-\x39\x41-\x5A\x5F\x61-\x7A]{0,30})$" },
+            new ApplicationIdentifier { Ai = "241", Fnc1Required = true, DataTitle = "CUST. PART NO.", RegularExpression = @"^241([\x21-\x22\x25-\x2F\x30-\x39\x3A-\x3F\x41-\x5A\x5F\x61-\x7A]{0,30})$" },
             new ApplicationIdentifier { Ai = "242", Fnc1Required = true, DataTitle = "MTO VARIANT", RegularExpression = @"^242(\d{0,6})$" },
             new ApplicationIdentifier { Ai = "243", Fnc1Required = true, DataTitle = "PCN", RegularExpression = @"^243([\x21-\x22\x25-\x2F\x30-\x39\x41-\x5A\x5F\x61-\x7A]{0,20})$" },
             new ApplicationIdentifier { Ai = "250", Fnc1Required = true, DataTitle = "SECONDARY SERIAL", RegularExpression = @"^250([\x21-\x22\x25-\x2F\x30-\x39\x41-\x5A\x5F\x61-\x7A]{0,30})$" },
