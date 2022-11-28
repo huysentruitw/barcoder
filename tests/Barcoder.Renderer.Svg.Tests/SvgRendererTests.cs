@@ -95,7 +95,7 @@ namespace Barcoder.Renderer.Svg.Tests
         [Fact(Skip = "Integration test")]
         public void Render_Ean8_IncludeContentAsText()
         {
-            var renderer = new SvgRenderer(includeEanContentAsText: true);
+            var renderer = new SvgRenderer(new SvgRendererOptions { IncludeEanContentAsText = true });
             IBarcode barcode = EanEncoder.Encode("1234567");
             using Stream stream = File.OpenWrite(@"d:\temp\ean-test.svg");
             renderer.Render(barcode, stream);
@@ -104,7 +104,7 @@ namespace Barcoder.Renderer.Svg.Tests
         [Fact(Skip = "Integration test")]
         public void Render_Ean13_IncludeContentAsText()
         {
-            var renderer = new SvgRenderer(includeEanContentAsText: true);
+            var renderer = new SvgRenderer(new SvgRendererOptions { IncludeEanContentAsText = true });
             IBarcode barcode = EanEncoder.Encode("978020137962");
             using Stream stream = File.OpenWrite(@"d:\temp\ean-test.svg");
             renderer.Render(barcode, stream);
