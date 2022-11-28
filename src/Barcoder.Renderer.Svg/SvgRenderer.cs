@@ -10,15 +10,16 @@ namespace Barcoder.Renderer.Svg
     {
         private static readonly int[] Ean8LongerBars = new[] { 0, 2, 32, 34, 64, 66 };
         private static readonly int[] Ean13LongerBars = new[] { 0, 2, 46, 48, 92, 94 };
-        private readonly bool _includeEanContentAsText;
 
-        public SvgRenderer(bool includeEanContentAsText = false)
+        private readonly SvgRendererOptions _options;
+        
+        public SvgRenderer(SvgRendererOptions options = null)
         {
-            _includeEanContentAsText = includeEanContentAsText;
+            _options = options ?? new SvgRendererOptions();
         }
 
         private bool IncludeEanContent(IBarcode barcode)
-            => _includeEanContentAsText && (barcode.Metadata.CodeKind == BarcodeType.EAN13 || barcode.Metadata.CodeKind == BarcodeType.EAN8);
+            => _options.IncludeEanContentAsText && (barcode.Metadata.CodeKind == BarcodeType.EAN13 || barcode.Metadata.CodeKind == BarcodeType.EAN8);
 
         public void Render(IBarcode barcode, Stream outputStream)
         {
@@ -36,11 +37,13 @@ namespace Barcoder.Renderer.Svg
         {
             var document = SvgDocument.Create();
             int height = IncludeEanContent(barcode) ? 55 : 50;
+            int margin = _options.CustomMargin ?? barcode.Margin;
+            
             document.ViewBox = new SvgViewBox
             {
                 Left = 0,
                 Top = 0,
-                Width = barcode.Bounds.X + 2 * barcode.Margin,
+                Width = barcode.Bounds.X + 2 * margin,
                 Height = height
             };
             document.Fill = "#FFFFFF";
@@ -81,14 +84,14 @@ namespace Barcoder.Renderer.Svg
                 {
                     line = document.AddLine();
                     line.StrokeWidth = 1.5;
-                    line.X1 = line.X2 = x + barcode.Margin - 0.25;
+                    line.X1 = line.X2 = x + margin - 0.25;
                     line.Y1 = 0;
                     line.Y2 = lineHeight;
                 }
                 else
                 {
                     line = document.AddLine();
-                    line.X1 = line.X2 = x + barcode.Margin;
+                    line.X1 = line.X2 = x + margin;
                     line.Y1 = 0;
                     line.Y2 = lineHeight;
                 }
@@ -128,13 +131,15 @@ namespace Barcoder.Renderer.Svg
 
         private void Render2D(IBarcode barcode, Stream outputStream)
         {
+            int margin = _options.CustomMargin ?? barcode.Margin;
+            
             var document = SvgDocument.Create();
             document.ViewBox = new SvgViewBox
             {
                 Left = 0,
                 Top = 0,
-                Width = barcode.Bounds.X + 2 * barcode.Margin,
-                Height = barcode.Bounds.Y + 2 * barcode.Margin
+                Width = barcode.Bounds.X + 2 * margin,
+                Height = barcode.Bounds.Y + 2 * margin
             };
             document.Fill = "#FFFFFF";
             document.Stroke = "#000000";
@@ -150,8 +155,8 @@ namespace Barcoder.Renderer.Svg
                     if (barcode.At(x, y))
                     {
                         SvgRect rect = group.AddRect();
-                        rect.X = x + barcode.Margin;
-                        rect.Y = y + barcode.Margin;
+                        rect.X = x + margin;
+                        rect.Y = y + margin;
                         rect.Width = 1;
                         rect.Height = 1;
                     }

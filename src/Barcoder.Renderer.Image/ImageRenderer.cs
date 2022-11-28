@@ -17,41 +17,31 @@ namespace Barcoder.Renderer.Image
 {
     public sealed class ImageRenderer : IRenderer
     {
-        private readonly IImageEncoder _imageEncoder;
-        private readonly int _pixelSize;
-        private readonly int _barHeightFor1DBarcode;
-        private readonly bool _includeEanContentAsText;
-        private readonly string _eanFontFamily;
+        private readonly ImageRendererOptions _options;
+        private readonly Lazy<IImageEncoder> _imageEncoder;
 
-        public ImageRenderer(
-            int pixelSize = 10,
-            int barHeightFor1DBarcode = 40,
-            ImageFormat imageFormat = ImageFormat.Png,
-            int jpegQuality = 75,
-            bool includeEanContentAsText = false,
-            string eanFontFamily = null)
+        public ImageRenderer(ImageRendererOptions options = null)
         {
-            if (pixelSize <= 0) throw new ArgumentOutOfRangeException(nameof(pixelSize), "Value must be larger than zero");
-            if (barHeightFor1DBarcode <= 0) throw new ArgumentOutOfRangeException(nameof(barHeightFor1DBarcode), "Value must be larger than zero");
-            if (jpegQuality < 0 || jpegQuality > 100) throw new ArgumentOutOfRangeException(nameof(jpegQuality), "Value must be a value between 0 and 100");
+            options = options ?? new ImageRendererOptions();
 
-            _pixelSize = pixelSize;
-            _barHeightFor1DBarcode = barHeightFor1DBarcode;
-            _imageEncoder = GetImageEncoder(imageFormat, jpegQuality);
-            _includeEanContentAsText = includeEanContentAsText;
-            _eanFontFamily = eanFontFamily ?? "Arial";
+            if (options.PixelSize <= 0) throw new ArgumentOutOfRangeException(nameof(options.PixelSize), "Value must be larger than zero");
+            if (options.BarHeightFor1DBarcode <= 0) throw new ArgumentOutOfRangeException(nameof(options.BarHeightFor1DBarcode), "Value must be larger than zero");
+            if (options.JpegQuality < 0 || options.JpegQuality > 100) throw new ArgumentOutOfRangeException(nameof(options.JpegQuality), "Value must be a value between 0 and 100");
+
+            _options = options;
+            _imageEncoder = new Lazy<IImageEncoder>(GetImageEncoder);
         }
-
-        private static IImageEncoder GetImageEncoder(ImageFormat imageFormat, int jpegQuality)
+        
+        private IImageEncoder GetImageEncoder()
         {
-            switch (imageFormat)
+            switch (_options.ImageFormat)
             {
             case ImageFormat.Bmp: return new BmpEncoder();
             case ImageFormat.Gif: return new GifEncoder();
-            case ImageFormat.Jpeg: return new JpegEncoder { Quality = jpegQuality };
+            case ImageFormat.Jpeg: return new JpegEncoder { Quality = _options.JpegQuality };
             case ImageFormat.Png: return new PngEncoder();
             default:
-                throw new NotSupportedException($"Requested image format {imageFormat} is not supported");
+                throw new NotSupportedException($"Requested image format {_options.ImageFormat} is not supported");
             }
         }
 
@@ -69,8 +59,9 @@ namespace Barcoder.Renderer.Image
 
         private void Render1D(IBarcode barcode, Stream outputStream)
         {
-            int width = (barcode.Bounds.X + 2 * barcode.Margin) * _pixelSize;
-            int height = (_barHeightFor1DBarcode + 2 * barcode.Margin) * _pixelSize;
+            int margin = _options.CustomMargin ?? barcode.Margin;
+            int width = (barcode.Bounds.X + 2 * margin) * _options.PixelSize;
+            int height = (_options.BarHeightFor1DBarcode + 2 * margin) * _options.PixelSize;
 
             using (var image = new Image<L8>(width, height))
             {
@@ -83,24 +74,25 @@ namespace Barcoder.Renderer.Image
                             continue;
                         ctx.FillPolygon(
                             Color.Black,
-                            new Vector2((barcode.Margin + x) * _pixelSize, barcode.Margin * _pixelSize),
-                            new Vector2((barcode.Margin + x + 1) * _pixelSize, barcode.Margin * _pixelSize),
-                            new Vector2((barcode.Margin + x + 1) * _pixelSize, (_barHeightFor1DBarcode + barcode.Margin) * _pixelSize),
-                            new Vector2((barcode.Margin + x) * _pixelSize, (_barHeightFor1DBarcode + barcode.Margin) * _pixelSize));
+                            new Vector2((margin + x) * _options.PixelSize, margin * _options.PixelSize),
+                            new Vector2((margin + x + 1) * _options.PixelSize, margin * _options.PixelSize),
+                            new Vector2((margin + x + 1) * _options.PixelSize, (_options.BarHeightFor1DBarcode + margin) * _options.PixelSize),
+                            new Vector2((margin + x) * _options.PixelSize, (_options.BarHeightFor1DBarcode + margin) * _options.PixelSize));
                     }
                 });
 
-                if (_includeEanContentAsText && barcode.IsEanBarcode())
-                    EanContentRenderer.Render(image, barcode, fontFamily: _eanFontFamily, scale: _pixelSize);
+                if (_options.IncludeEanContentAsText && barcode.IsEanBarcode())
+                    EanContentRenderer.Render(image, barcode, fontFamily: _options.EanFontFamily, scale: _options.PixelSize);
 
-                image.Save(outputStream, _imageEncoder);
+                image.Save(outputStream, _imageEncoder.Value);
             }
         }
 
         private void Render2D(IBarcode barcode, Stream outputStream)
         {
-            int width = (barcode.Bounds.X + 2 * barcode.Margin) * _pixelSize;
-            int height = (barcode.Bounds.Y + 2 * barcode.Margin) * _pixelSize;
+            int margin = _options.CustomMargin ?? barcode.Margin;
+            int width = (barcode.Bounds.X + 2 * margin) * _options.PixelSize;
+            int height = (barcode.Bounds.Y + 2 * margin) * _options.PixelSize;
 
             using (var image = new Image<L8>(width, height))
             {
@@ -114,15 +106,15 @@ namespace Barcoder.Renderer.Image
                             if (!barcode.At(x, y)) continue;
                             ctx.FillPolygon(
                                 Color.Black,
-                                new Vector2((barcode.Margin + x) * _pixelSize, (barcode.Margin + y) * _pixelSize),
-                                new Vector2((barcode.Margin + x + 1) * _pixelSize, (barcode.Margin + y) * _pixelSize),
-                                new Vector2((barcode.Margin + x + 1) * _pixelSize, (barcode.Margin + y + 1) * _pixelSize),
-                                new Vector2((barcode.Margin + x) * _pixelSize, (barcode.Margin + y + 1) * _pixelSize));
+                                new Vector2((margin + x) * _options.PixelSize, (margin + y) * _options.PixelSize),
+                                new Vector2((margin + x + 1) * _options.PixelSize, (margin + y) * _options.PixelSize),
+                                new Vector2((margin + x + 1) * _options.PixelSize, (margin + y + 1) * _options.PixelSize),
+                                new Vector2((margin + x) * _options.PixelSize, (margin + y + 1) * _options.PixelSize));
                         }
                     }
                 });
 
-                image.Save(outputStream, _imageEncoder);
+                image.Save(outputStream, _imageEncoder.Value);
             }
         }
     }
