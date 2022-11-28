@@ -63,7 +63,7 @@ Example for rendering to PNG:
 
 ```csharp
 var barcode = QrEncoder.Encode("Hello World!");
-var renderer = new ImageRenderer(imageFormat: ImageFormat.Png);
+var renderer = new ImageRenderer(new ImageRendererOptions { ImageFormat = ImageFormat.Png });
 
 using (var stream = new FileStream("output.png", FileMode.Create))
 {
