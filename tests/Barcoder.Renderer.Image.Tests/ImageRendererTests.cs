@@ -140,6 +140,23 @@ namespace Barcoder.Renderer.Image.Tests
             imageFormat.Name.Should().Be("PNG");
         }
 
+        [Fact]
+        public void Render_Image_ShouldRender()
+        {
+            // Arrange
+            var renderer = new ImageRenderer(new ImageRendererOptions { ImageFormat = ImageFormat.Png });
+            IBarcode barcode = QrEncoder.Encode("Hello", ErrorCorrectionLevel.L, Encoding.Unicode);
+
+            // Act
+            var image = renderer.Render(barcode);
+
+            // Assert
+            image.Frames.Count.Should().Be(1);
+            image.Width.Should().Be(310);
+            image.Height.Should().Be(310);
+            image.PixelType.BitsPerPixel.Should().Be(8);
+        }
+
         private static byte[] RenderBarcodeToByteArray(IRenderer renderer, IBarcode barcode)
         {
             using var stream = new MemoryStream();
