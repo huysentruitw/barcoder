@@ -50,72 +50,89 @@ namespace Barcoder.Renderer.Image
             barcode = barcode ?? throw new ArgumentNullException(nameof(barcode));
             outputStream = outputStream ?? throw new ArgumentNullException(nameof(outputStream));
             if (barcode.Bounds.Y == 1)
-                Render1D(barcode, outputStream);
+            {
+                using (var image = Render1D(barcode))
+                {
+                    image.Save(outputStream, _imageEncoder.Value);
+                }
+            }
             else if (barcode.Bounds.Y > 1)
-                Render2D(barcode, outputStream);
+            {
+                using (var image = Render2D(barcode))
+                {
+                    image.Save(outputStream, _imageEncoder.Value);
+                }
+            }
             else
                 throw new NotSupportedException($"Y value of {barcode.Bounds.Y} is invalid");
         }
 
-        private void Render1D(IBarcode barcode, Stream outputStream)
+        public Image<L8> Render(IBarcode barcode)
+        {
+            barcode = barcode ?? throw new ArgumentNullException(nameof(barcode));
+            if (barcode.Bounds.Y == 1)
+                return Render1D(barcode);
+            else if (barcode.Bounds.Y > 1)
+                return Render2D(barcode);
+            else
+                throw new NotSupportedException($"Y value of {barcode.Bounds.Y} is invalid");
+        }
+
+        private Image<L8> Render1D(IBarcode barcode)
         {
             int margin = _options.CustomMargin ?? barcode.Margin;
             int width = (barcode.Bounds.X + 2 * margin) * _options.PixelSize;
             int height = (_options.BarHeightFor1DBarcode + 2 * margin) * _options.PixelSize;
 
-            using (var image = new Image<L8>(width, height))
+            var image = new Image<L8>(width, height);
+            image.Mutate(ctx =>
             {
-                image.Mutate(ctx =>
+                ctx.Fill(Color.White);
+                for (var x = 0; x < barcode.Bounds.X; x++)
                 {
-                    ctx.Fill(Color.White);
-                    for (var x = 0; x < barcode.Bounds.X; x++)
-                    {
-                        if (!barcode.At(x, 0))
-                            continue;
-                        ctx.FillPolygon(
-                            Color.Black,
-                            new Vector2((margin + x) * _options.PixelSize, margin * _options.PixelSize),
-                            new Vector2((margin + x + 1) * _options.PixelSize, margin * _options.PixelSize),
-                            new Vector2((margin + x + 1) * _options.PixelSize, (_options.BarHeightFor1DBarcode + margin) * _options.PixelSize),
-                            new Vector2((margin + x) * _options.PixelSize, (_options.BarHeightFor1DBarcode + margin) * _options.PixelSize));
-                    }
-                });
+                    if (!barcode.At(x, 0))
+                        continue;
+                    ctx.FillPolygon(
+                        Color.Black,
+                        new Vector2((margin + x) * _options.PixelSize, margin * _options.PixelSize),
+                        new Vector2((margin + x + 1) * _options.PixelSize, margin * _options.PixelSize),
+                        new Vector2((margin + x + 1) * _options.PixelSize, (_options.BarHeightFor1DBarcode + margin) * _options.PixelSize),
+                        new Vector2((margin + x) * _options.PixelSize, (_options.BarHeightFor1DBarcode + margin) * _options.PixelSize));
+                }
+            });
 
-                if (_options.IncludeEanContentAsText && barcode.IsEanBarcode())
-                    EanContentRenderer.Render(image, barcode, fontFamily: _options.EanFontFamily, scale: _options.PixelSize);
+            if (_options.IncludeEanContentAsText && barcode.IsEanBarcode())
+                EanContentRenderer.Render(image, barcode, fontFamily: _options.EanFontFamily, scale: _options.PixelSize);
 
-                image.Save(outputStream, _imageEncoder.Value);
-            }
+            return image;
         }
 
-        private void Render2D(IBarcode barcode, Stream outputStream)
+        private Image<L8> Render2D(IBarcode barcode)
         {
             int margin = _options.CustomMargin ?? barcode.Margin;
             int width = (barcode.Bounds.X + 2 * margin) * _options.PixelSize;
             int height = (barcode.Bounds.Y + 2 * margin) * _options.PixelSize;
 
-            using (var image = new Image<L8>(width, height))
+            var image = new Image<L8>(width, height);
+            image.Mutate(ctx =>
             {
-                image.Mutate(ctx =>
+                ctx.Fill(Color.White);
+                for (var y = 0; y < barcode.Bounds.Y; y++)
                 {
-                    ctx.Fill(Color.White);
-                    for (var y = 0; y < barcode.Bounds.Y; y++)
+                    for (var x = 0; x < barcode.Bounds.X; x++)
                     {
-                        for (var x = 0; x < barcode.Bounds.X; x++)
-                        {
-                            if (!barcode.At(x, y)) continue;
-                            ctx.FillPolygon(
-                                Color.Black,
-                                new Vector2((margin + x) * _options.PixelSize, (margin + y) * _options.PixelSize),
-                                new Vector2((margin + x + 1) * _options.PixelSize, (margin + y) * _options.PixelSize),
-                                new Vector2((margin + x + 1) * _options.PixelSize, (margin + y + 1) * _options.PixelSize),
-                                new Vector2((margin + x) * _options.PixelSize, (margin + y + 1) * _options.PixelSize));
-                        }
+                        if (!barcode.At(x, y)) continue;
+                        ctx.FillPolygon(
+                            Color.Black,
+                            new Vector2((margin + x) * _options.PixelSize, (margin + y) * _options.PixelSize),
+                            new Vector2((margin + x + 1) * _options.PixelSize, (margin + y) * _options.PixelSize),
+                            new Vector2((margin + x + 1) * _options.PixelSize, (margin + y + 1) * _options.PixelSize),
+                            new Vector2((margin + x) * _options.PixelSize, (margin + y + 1) * _options.PixelSize));
                     }
-                });
+                }
+            });
 
-                image.Save(outputStream, _imageEncoder.Value);
-            }
+            return image;
         }
     }
 }
