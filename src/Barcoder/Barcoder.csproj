@@ -1,12 +1,12 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>net472;netstandard2.0</TargetFrameworks>
+    <TargetFrameworks>net6.0</TargetFrameworks>
     <Title>Barcoder</Title>
     <Description>Lightweight Barcode Encoding Library for .NET Framework, .NET Standard and .NET Core.</Description>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Company>Wouter Huysentruit</Company>
-    <Version>1.0.0.0</Version>
+    <Version>2.0.0.0</Version>
     <Authors>Wouter Huysentruit</Authors>
     <PackageProjectUrl>https://github.com/huysentruitw/barcoder</PackageProjectUrl>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
