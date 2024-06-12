@@ -8,6 +8,7 @@
     <Company>Wouter Huysentruit</Company>
     <Version>2.0.0.0</Version>
     <Authors>Wouter Huysentruit</Authors>
+    <PackageId>barcoder2</PackageId>
     <PackageProjectUrl>https://github.com/huysentruitw/barcoder</PackageProjectUrl>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <RepositoryType>git</RepositoryType>
