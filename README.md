@@ -28,17 +28,17 @@ Supported Barcode Types:
 
 ## NuGet package
 
-To install the [main package](https://www.nuget.org/packages/barcoder2):
+To install the [main package](https://www.nuget.org/packages/Barcoder.v2):
 
-    PM> Install-Package barcoder2
+    PM> Install-Package Barcoder.v2
 
 To install the SVG renderer:
 
-    PM> Install-Package barcoder2.Renderer.Svg
+    PM> Install-Package Barcoder.Renderer.Svg.v2
 
 To install the image renderer[^1]:
 
-	PM> Install-Package barcoder2.Renderer.Image
+	PM> Install-Package Barcoder.Renderer.Image.v2
 	
 ## Usage - render to SVG
 
