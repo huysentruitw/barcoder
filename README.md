@@ -1,10 +1,10 @@
 # Barcoder - Barcode Encoding Library
 
-[![Build status](https://github.com/huysentruitw/barcoder/actions/workflows/build-test-publish.yml/badge.svg?branch=master)](https://github.com/huysentruitw/barcoder/actions/workflows/build-test-publish.yml?query=branch%3Amaster)
+[![Build status](https://github.com/logstore/barcoder/actions/workflows/build-test-publish.yml/badge.svg?branch=master)](https://github.com/logstore/barcoder/actions/workflows/build-test-publish.yml?query=branch%3Amaster)
 
 Lightweight Barcode Encoding Library for .NET Framework, .NET Standard and .NET Core. Additional packages are available for rendering the generated barcode to SVG or an image.
 
-Code ported from the GO project https://github.com/boombuler/barcode by [Florian Sundermann](https://github.com/boombuler).
+The barcode2 is a fork of library Barcoder by [Huysentruit](https://github.com/huysentruitw).
 
 Supported Barcode Types:
 
@@ -28,17 +28,17 @@ Supported Barcode Types:
 
 ## NuGet package
 
-To install the [main package](https://www.nuget.org/packages/Barcoder):
+To install the [main package](https://www.nuget.org/packages/barcoder2):
 
-    PM> Install-Package Barcoder
+    PM> Install-Package Barcoder2
 
 To install the SVG renderer:
 
-    PM> Install-Package Barcoder.Renderer.Svg
+    PM> Install-Package Barcoder2.Renderer.Svg
 
 To install the image renderer[^1]:
 
-	PM> Install-Package Barcoder.Renderer.Image
+	PM> Install-Package Barcoder2.Renderer.Image
 	
 ## Usage - render to SVG
 

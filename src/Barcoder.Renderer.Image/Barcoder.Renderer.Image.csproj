@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFrameworks>net6.0</TargetFrameworks>
-    <Title>Barcoder.Renderer.Image</Title>
+    <Title>Barcoder2.Renderer.Image</Title>
     <Description>Image Renderer for Barcoder (.NET Framework, .NET Standard and .NET Core).</Description>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Company>Wouter Huysentruit</Company>
