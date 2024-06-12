@@ -2,17 +2,17 @@
 
   <PropertyGroup>
     <TargetFrameworks>net6.0</TargetFrameworks>
-    <Title>Barcoder2.Renderer.Image</Title>
+    <Title>Barcoder.Renderer.Image.v2</Title>
     <Description>Image Renderer for Barcoder (.NET Framework, .NET Standard and .NET Core).</Description>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Company>Wouter Huysentruit</Company>
     <Version>2.0.0.0</Version>
-    <Authors>Wouter Huysentruit</Authors>
-    <PackageId>barcoder2.Renderer.Image</PackageId>
-    <PackageProjectUrl>https://github.com/huysentruitw/barcoder</PackageProjectUrl>
+    <Authors>Diego Dias</Authors>
+    <PackageId>Barcoder.Renderer.Image.v2</PackageId>
+    <PackageProjectUrl>https://github.com/logstore/barcoder</PackageProjectUrl>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <RepositoryType>git</RepositoryType>
-    <RepositoryUrl>https://github.com/huysentruitw/barcoder</RepositoryUrl>
+    <RepositoryUrl>https://github.com/logstore/barcoder</RepositoryUrl>
     <NoWarn>NU5104</NoWarn>
   </PropertyGroup>
 

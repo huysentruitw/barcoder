@@ -4,7 +4,7 @@
 
 Lightweight Barcode Encoding Library for .NET Framework, .NET Standard and .NET Core. Additional packages are available for rendering the generated barcode to SVG or an image.
 
-The barcode2 is a fork of library Barcoder by [Huysentruit](https://github.com/huysentruitw).
+The Barcoder.v2 is a fork of library Barcoder by [Huysentruit](https://github.com/huysentruitw).
 
 Supported Barcode Types:
 
