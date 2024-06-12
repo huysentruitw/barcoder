@@ -11,23 +11,23 @@ on:
 
 jobs:
   build:
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v4
     - name: Fetch all history for all tags and branches
       run: git fetch --prune --unshallow
     - name: Install GitVersion
-      uses: gittools/actions/gitversion/setup@v0.9.11
+      uses: gittools/actions/gitversion/setup@v1.1.1
       with:
           versionSpec: '5.x'
     - name: Use GitVersion
       id: gitversion # step id used as reference for output values
-      uses: gittools/actions/gitversion/execute@v0.9.11
-    - name: Setup .NET 5
+      uses: gittools/actions/gitversion/execute@v1.1.1
+    - name: Setup .NET 6
       uses: actions/setup-dotnet@v1
       with:
-        dotnet-version: 5.0.302
+        dotnet-version: '6.x'
     - name: Install dependencies
       run: dotnet restore
     - name: Build
@@ -35,7 +35,7 @@ jobs:
     - name: Test
       run: dotnet test --configuration Release --no-restore --no-build --verbosity normal
     - name: Publish
-      if: github.ref == 'refs/heads/master' && github.repository_owner == 'huysentruitw'
+      if: github.ref == 'refs/heads/master'
       shell: pwsh
       run: |
         Get-ChildItem ".\src" -Filter "*.nupkg" -R | ForEach-Object {
