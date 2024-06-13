@@ -4,6 +4,9 @@
 
 Lightweight Barcode Encoding Library for .NET Framework, .NET Standard and .NET Core. Additional packages are available for rendering the generated barcode to SVG or an image.
 
+Please note that the image renderer (`Barcoder.Renderer.Image`) requires .NET6 or .NET8 because of the dependency on `SixLabors.ImageSharp.Drawing` and no longer works for .NET Framework.
+However, feel free to create your own renderer with another version or other image generation library.
+
 Code ported from the GO project https://github.com/boombuler/barcode by [Florian Sundermann](https://github.com/boombuler).
 
 Supported Barcode Types:

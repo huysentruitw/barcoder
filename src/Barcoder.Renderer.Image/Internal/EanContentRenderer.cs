@@ -1,4 +1,4 @@
-﻿using System.Numerics;
+using System.Numerics;
 using SixLabors.Fonts;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Drawing.Processing;
@@ -68,7 +68,7 @@ namespace Barcoder.Renderer.Image.Internal
 
         private static void RenderBlackText(Image<L8> image, string text, float x, float y, Font font)
         {
-            var options = new TextOptions(font)
+            var options = new RichTextOptions(font)
             {
                 HorizontalAlignment = HorizontalAlignment.Center,
                 VerticalAlignment = VerticalAlignment.Center,
