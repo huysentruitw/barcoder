@@ -85,7 +85,7 @@ namespace Barcoder.Renderer.Image.Tests
 
             // Assert
             stream.Position = 0;
-            using var image = ImageSharp.Image.Load(stream, out IImageFormat imageFormat);
+            IImageFormat imageFormat = ImageSharp.Image.DetectFormat(stream);
             imageFormat.Name.Should().Be("BMP");
         }
 
@@ -102,7 +102,7 @@ namespace Barcoder.Renderer.Image.Tests
 
             // Assert
             stream.Position = 0;
-            using var image = ImageSharp.Image.Load(stream, out IImageFormat imageFormat);
+            IImageFormat imageFormat = ImageSharp.Image.DetectFormat(stream);
             imageFormat.Name.Should().Be("GIF");
         }
 
@@ -119,7 +119,7 @@ namespace Barcoder.Renderer.Image.Tests
 
             // Assert
             stream.Position = 0;
-            using var image = ImageSharp.Image.Load(stream, out IImageFormat imageFormat);
+            IImageFormat imageFormat = ImageSharp.Image.DetectFormat(stream);
             imageFormat.Name.Should().Be("JPEG");
         }
 
@@ -136,7 +136,7 @@ namespace Barcoder.Renderer.Image.Tests
 
             // Assert
             stream.Position = 0;
-            using var image = ImageSharp.Image.Load(stream, out IImageFormat imageFormat);
+            IImageFormat imageFormat = ImageSharp.Image.DetectFormat(stream);
             imageFormat.Name.Should().Be("PNG");
         }
 
