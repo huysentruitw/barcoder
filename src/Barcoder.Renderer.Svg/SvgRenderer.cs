@@ -118,14 +118,14 @@ namespace Barcoder.Renderer.Svg
             {
                 if (barcode.Metadata.CodeKind == BarcodeType.EAN13)
                 {
-                    AddText(document, 4, height + 0.5D, barcode.Content.Substring(0, 1));
-                    AddText(document, 21, height + 0.5D, barcode.Content.Substring(1, 6));
-                    AddText(document, 67, height + 0.5D, barcode.Content.Substring(7));
+                    AddText(document, 4, height - 0.5D, barcode.Content.Substring(0, 1));
+                    AddText(document, 21, height - 0.5D, barcode.Content.Substring(1, 6));
+                    AddText(document, 67, height - 0.5D, barcode.Content.Substring(7));
                 }
                 else
                 {
-                    AddText(document, 18, height + 0.5D, barcode.Content.Substring(0, 4));
-                    AddText(document, 50, height + 0.5D, barcode.Content.Substring(4));
+                    AddText(document, 18, height - 0.5D, barcode.Content.Substring(0, 4));
+                    AddText(document, 50, height - 0.5D, barcode.Content.Substring(4));
                 }
             }
 
