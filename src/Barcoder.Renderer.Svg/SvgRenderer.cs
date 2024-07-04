@@ -12,7 +12,7 @@ namespace Barcoder.Renderer.Svg
         private static readonly int[] Ean13LongerBars = new[] { 0, 2, 46, 48, 92, 94 };
 
         private readonly SvgRendererOptions _options;
-        
+
         public SvgRenderer(SvgRendererOptions options = null)
         {
             _options = options ?? new SvgRendererOptions();
@@ -20,6 +20,21 @@ namespace Barcoder.Renderer.Svg
 
         private bool IncludeEanContent(IBarcode barcode)
             => _options.IncludeEanContentAsText && (barcode.Metadata.CodeKind == BarcodeType.EAN13 || barcode.Metadata.CodeKind == BarcodeType.EAN8);
+
+        private int Get1DBarcodeHeight(IBarcode barcode)
+        {
+            var height = _options.BarHeightFor1DBarcode;
+            if (height <= 0)
+                throw new ArgumentOutOfRangeException(nameof(_options.BarHeightFor1DBarcode), "Value must be larger than zero");
+
+
+            if (IncludeEanContent(barcode))
+            {
+                height += 5; // add extra height for text, 2px margin + 3px text height
+            }
+
+            return height;
+        }
 
         public void Render(IBarcode barcode, Stream outputStream)
         {
@@ -36,9 +51,9 @@ namespace Barcoder.Renderer.Svg
         private void Render1D(IBarcode barcode, Stream outputStream)
         {
             var document = SvgDocument.Create();
-            int height = IncludeEanContent(barcode) ? 55 : 50;
+            int height = Get1DBarcodeHeight(barcode);
             int margin = _options.CustomMargin ?? barcode.Margin;
-            
+
             document.ViewBox = new SvgViewBox
             {
                 Left = 0,
@@ -68,14 +83,14 @@ namespace Barcoder.Renderer.Svg
                     {
                         if (!Ean13LongerBars.Contains(x))
                         {
-                            lineHeight = 48;
+                            lineHeight -= 7; // strip line height at extra height 5px + margin 2px
                         }
                     }
                     else
                     {
                         if (!Ean8LongerBars.Contains(x))
                         {
-                            lineHeight = 48;
+                            lineHeight -= 7; // strip line height at extra height 5px + margin 2px
                         }
                     }
                 }
@@ -103,14 +118,14 @@ namespace Barcoder.Renderer.Svg
             {
                 if (barcode.Metadata.CodeKind == BarcodeType.EAN13)
                 {
-                    AddText(document, 4, 54.5D, barcode.Content.Substring(0, 1));
-                    AddText(document, 21, 54.5D, barcode.Content.Substring(1, 6));
-                    AddText(document, 67, 54.5D, barcode.Content.Substring(7));
+                    AddText(document, 4, height + 0.5D, barcode.Content.Substring(0, 1));
+                    AddText(document, 21, height + 0.5D, barcode.Content.Substring(1, 6));
+                    AddText(document, 67, height + 0.5D, barcode.Content.Substring(7));
                 }
                 else
                 {
-                    AddText(document, 18, 54.5D, barcode.Content.Substring(0, 4));
-                    AddText(document, 50, 54.5D, barcode.Content.Substring(4));
+                    AddText(document, 18, height + 0.5D, barcode.Content.Substring(0, 4));
+                    AddText(document, 50, height + 0.5D, barcode.Content.Substring(4));
                 }
             }
 
@@ -120,7 +135,7 @@ namespace Barcoder.Renderer.Svg
         private void AddText(SvgDocument doc, double x, double y, string t)
         {
             SvgText text = doc.AddText();
-            text.FontFamily = "arial";
+            text.FontFamily = _options.EanFontFamily;
             text.Text = t;
             text.X = x;
             text.Y = y;
@@ -132,7 +147,7 @@ namespace Barcoder.Renderer.Svg
         private void Render2D(IBarcode barcode, Stream outputStream)
         {
             int margin = _options.CustomMargin ?? barcode.Margin;
-            
+
             var document = SvgDocument.Create();
             document.ViewBox = new SvgViewBox
             {
