@@ -135,7 +135,7 @@ namespace Barcoder.Renderer.Svg
         private void AddText(SvgDocument doc, double x, double y, string t)
         {
             SvgText text = doc.AddText();
-            text.FontFamily = _options.EanFontFamily;
+            text.FontFamily = _options.EanFontFamily ?? throw new ArgumentNullException(nameof(_options.EanFontFamily));
             text.Text = t;
             text.X = x;
             text.Y = y;
