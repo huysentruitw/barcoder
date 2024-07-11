@@ -8,6 +8,6 @@
 
         public int BarHeightFor1DBarcode { get; set; } = 50;
 
-        public string EanFontFamily { get; set; } = "Arial";
+        public string EanFontFamily { get; set; } = "arial";
     }
 }
